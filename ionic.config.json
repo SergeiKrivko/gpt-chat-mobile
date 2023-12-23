@@ -1,0 +1,8 @@
+{
+  "name": "GPT-chat-mobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular",
+  "id": "c1ef7ba6"
+}
