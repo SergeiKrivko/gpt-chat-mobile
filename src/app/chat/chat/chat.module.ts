@@ -1,19 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ViewMessagePage } from './view-message.page';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ViewMessagePageRoutingModule } from './view-message-routing.module';
+import { ChatPageRoutingModule } from './chat-routing.module';
+
+import { ChatPage } from './chat.page';
+import {BubbleComponent} from "../bubble/bubble.component";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ViewMessagePageRoutingModule
+    ChatPageRoutingModule,
   ],
-  declarations: [ViewMessagePage]
+  declarations: [ChatPage, BubbleComponent]
 })
-export class ViewMessagePageModule {}
+export class ChatPageModule {}
