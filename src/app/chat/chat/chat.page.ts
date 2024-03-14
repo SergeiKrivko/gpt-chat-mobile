@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Message} from "../../services/data.service";
-import {HttpClient, HttpClientModule, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {IonTextarea} from "@ionic/angular";
 
 @Component({
@@ -8,7 +8,7 @@ import {IonTextarea} from "@ionic/angular";
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
 })
-export class ChatPage implements OnInit {
+export class ChatPage {
   public messages: Message[] = [
     {
       role: 'user',
@@ -19,12 +19,9 @@ export class ChatPage implements OnInit {
       content: 'Hello!'
     },
   ];
-  private url: string = "https://www.llama2.ai";
+  private url: string = "/api";
 
   constructor(private http: HttpClient) {
-  }
-
-  ngOnInit() {
   }
 
   getMessages(): Message[] {
@@ -41,33 +38,24 @@ export class ChatPage implements OnInit {
   }
 
   runGPT(text: string | null | undefined) {
-    this.http.post(this.url + "/api",
+    this.http.post(this.url,
       {
         "prompt": text,
         "model": "meta/llama-2-70b-chat",
         "maxTokens": 8000,
       }, {
         headers: {
-          "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0",
-          "Accept": "*/*",
-          "Accept-Language": "de,en-US;q=0.7,en;q=0.3",
-          "Accept-Encoding": "gzip, deflate, br",
-          "Referer": this.url,
           "Content-Type": "text/plain;charset=UTF-8",
-          "Origin": this.url,
-          "Connection": "keep-alive",
-          "Sec-Fetch-Dest": "empty",
-          "Sec-Fetch-Mode": "cors",
-          "Sec-Fetch-Site": "same-origin",
-          "Pragma": "no-cache",
-          "Cache-Control": "no-cache",
-          "TE": "trailers"
-        }
+        },
+        responseType: "text"
       }).subscribe(
-      (data: any) => this.messages.push(<Message>{
-        role: 'assistant',
-        content: data
-      })
+      (data: any) => {
+        console.log(data)
+        this.messages.push({
+          role: 'assistant',
+          content: data as string
+        })
+      }
     );
   }
 

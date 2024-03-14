@@ -4,5 +4,11 @@
     "capacitor": {}
   },
   "type": "angular",
-  "id": "c1ef7ba6"
+  "id": "c1ef7ba6",
+  "proxies": [
+    {
+      "path": "/api",
+      "proxyUrl": "https://www.llama2.ai/api"
+    }
+  ]
 }
