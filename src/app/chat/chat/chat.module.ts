@@ -8,6 +8,7 @@ import { ChatPageRoutingModule } from './chat-routing.module';
 
 import { ChatPage } from './chat.page';
 import {BubbleComponent} from "../bubble/bubble.component";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   imports: [
@@ -15,7 +16,10 @@ import {BubbleComponent} from "../bubble/bubble.component";
     FormsModule,
     IonicModule,
     ChatPageRoutingModule,
+    HttpClientModule,
   ],
   declarations: [ChatPage, BubbleComponent]
+
+
 })
 export class ChatPageModule {}

@@ -15,9 +15,9 @@
 
 <ion-footer>
   <ion-toolbar>
-    <ion-textarea placeholder="Message..." class="chat-input-area"></ion-textarea>
+    <ion-textarea #input_area [autoGrow]="true" placeholder="Message..." class="chat-input-area"></ion-textarea>
     <ion-buttons slot="end">
-      <ion-button>
+      <ion-button (click)="sendMessage(input_area)">
         <ion-icon slot="icon-only" name="send"></ion-icon>
       </ion-button>
     </ion-buttons>
