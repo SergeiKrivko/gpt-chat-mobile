@@ -1,16 +1,21 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button default-href="#"></ion-back-button>
+      <ion-back-button default-href="home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Chat</ion-title>
+    <ion-title>{{chat?.name}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [routerLink]="'settings'">
+        <ion-icon slot="icon-only" name="menu"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <div class="bubbles-list">
-      <app-chat-bubble *ngFor="let message of getMessages()" [message]="message"></app-chat-bubble>
-    </div>
+  <div class="bubbles-list">
+    <app-chat-bubble *ngFor="let message of getMessages()" [message]="message"></app-chat-bubble>
+  </div>
 </ion-content>
 
 <ion-footer>

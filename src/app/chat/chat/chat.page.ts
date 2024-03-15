@@ -1,40 +1,55 @@
-import {Component, OnInit} from '@angular/core';
-import {Message} from "../../services/data.service";
+import {Component, Input, OnInit} from '@angular/core';
+import {Chat, DataService, Message} from "../../services/data.service";
 import {HttpClient} from '@angular/common/http';
 import {IonTextarea} from "@ionic/angular";
+import {ActivatedRoute, ParamMap} from "@angular/router";
+import {catchError, of, switchMap} from "rxjs";
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
 })
-export class ChatPage {
-  public messages: Message[] = [
-    {
-      role: 'user',
-      content: 'Hello!'
-    },
-    {
-      role: 'assistant',
-      content: 'Hello!'
-    },
-  ];
-  private url: string = "/api";
+export class ChatPage implements OnInit {
+  chat?: Chat;
 
-  constructor(private http: HttpClient) {
+  private url: string = "https://www.llama2.ai/api";
+
+  constructor(private http: HttpClient,
+              private route: ActivatedRoute,
+              private chatService: DataService) {
+  }
+
+  ngOnInit() {
+    this.route.paramMap
+      .pipe(
+        switchMap((params: ParamMap) => {
+          const id: string | null = params.get('id');
+          if (id)
+            return this.chatService.getChat(id);
+          throw new Error('Необходимо передать ID проекта');
+        }),
+        catchError((error: Error) => {
+          return of(false);
+        })
+      )
+      .subscribe((chat: Chat | boolean): void => {
+        if (typeof chat != 'boolean') {
+          this.chat = chat;
+        }
+      })
   }
 
   getMessages(): Message[] {
-    return this.messages;
+    return this.chat ? this.chat.messages : [];
   }
 
   sendMessage(textarea: IonTextarea) {
-    this.messages.push(<Message>{
-      role: 'user',
-      content: textarea.value
-    })
-    this.runGPT(textarea.value);
-    textarea.value = "";
+    if (this.chat && textarea.value) {
+      this.chatService.newMessage(this.chat.id, 'user', textarea.value as string)
+      this.runGPT(textarea.value);
+      textarea.value = "";
+    }
   }
 
   runGPT(text: string | null | undefined) {
@@ -51,12 +66,10 @@ export class ChatPage {
       }).subscribe(
       (data: any) => {
         console.log(data)
-        this.messages.push({
-          role: 'assistant',
-          content: data as string
-        })
+        if (this.chat) {
+          this.chatService.newMessage(this.chat.id, 'assistant', data as string)
+        }
       }
     );
   }
-
 }

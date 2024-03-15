@@ -1,4 +1,16 @@
+.card {
+  display: flex;
+}
+
+.right {
+    justify-content: end;
+
+  .bubble {
+    border-radius: 10px 10px 0 10px;
+  }
+}
+
 .bubble {
   border-radius: 10px 10px 10px 0;
-  margin: 10px;
+  max-width: 80%;
 }

@@ -1,5 +1,7 @@
-<ion-card *ngIf="message" class="bubble" [color]="message.role === 'user' ? 'tertiary' : 'medium'">
-  <ion-card-content class="ion-text-wrap">
-    {{ message.content }}
-  </ion-card-content>
-</ion-card>
+<div class="card" *ngIf="message" [ngClass]="{'right': message.role === 'user'}">
+  <ion-card class="bubble" [color]="message.role === 'user' ? 'tertiary' : 'medium'">
+    <ion-card-content class="ion-text-wrap">
+      {{ message.content }}
+    </ion-card-content>
+  </ion-card>
+</div>

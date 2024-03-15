@@ -1,4 +1,12 @@
 import { Injectable } from '@angular/core';
+import {Observable, of} from "rxjs";
+import { UUID } from "angular2-uuid"
+
+export interface Chat {
+  id: string;
+  name: string;
+  messages: Message[];
+}
 
 export interface Message {
   role: string;
@@ -9,24 +17,42 @@ export interface Message {
   providedIn: 'root'
 })
 export class DataService {
-  public messages: Message[] = [
+  public chats: Chat[] = [
     {
-      role: 'user',
-      content: 'Hello!'
+      id: "123-456",
+      name: "Chat",
+      messages: [{role: "user", content: "Test message"}]
     },
+
     {
-      role: 'assistant',
-      content: 'Hello!'
-    },
-  ];
+      id: "123-456-7",
+      name: "Chat 2",
+      messages: [{role: "user", content: "Test message"}]
+    }
+  ]
 
   constructor() { }
 
-  public getMessages(): Message[] {
-    return this.messages;
+  public getChats(): Observable<Chat[]> {
+    return of(this.chats);
   }
 
-  public getMessageById(id: number): Message {
-    return this.messages[id];
+  public getChat(id: string): Observable<Chat> {
+    return of(this.chats.filter((chat: Chat) => chat.id === id)[0]);
+  }
+
+  public newChat() {
+    this.chats.push({
+      id: UUID.UUID(),
+      name: "New chat",
+      messages: []
+    })
+  }
+
+  public newMessage(chat_id: string, role: string, content: string) {
+    this.chats.filter((chat: Chat) => chat.id === chat_id)[0].messages.push({
+      role: role,
+      content: content
+    })
   }
 }
