@@ -6,9 +6,16 @@
       </ion-button>
     </ion-buttons>
     <ion-title>Chats</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [routerLink]="'/settings'">
+        <ion-icon slot="icon-only" name="menu"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <app-chat-item *ngFor="let chat of chats" [chat]="chat"></app-chat-item>
+  <ion-list [inset]="false">
+    <app-chat-item *ngFor="let chat of chats" [chat]="chat" [chatService]="data"></app-chat-item>
+  </ion-list>
 </ion-content>

@@ -3,11 +3,15 @@
 }
 
 .right {
-    justify-content: end;
+  justify-content: end;
 
   .bubble {
     border-radius: 10px 10px 0 10px;
   }
+}
+
+.ion-text-wrap {
+  padding: 12px;
 }
 
 .bubble {

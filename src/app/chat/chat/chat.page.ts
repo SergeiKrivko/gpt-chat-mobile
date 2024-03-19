@@ -1,9 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Chat, DataService, Message} from "../../services/data.service";
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {IonTextarea} from "@ionic/angular";
 import {ActivatedRoute, ParamMap} from "@angular/router";
-import {catchError, of, switchMap} from "rxjs";
+import {catchError, of, switchMap, throwError} from "rxjs";
 
 @Component({
   selector: 'app-chat',
@@ -13,11 +13,11 @@ import {catchError, of, switchMap} from "rxjs";
 export class ChatPage implements OnInit {
   chat?: Chat;
 
-  private url: string = "https://www.llama2.ai/api";
+  private url: string = "/ap";
 
   constructor(private http: HttpClient,
               private route: ActivatedRoute,
-              private chatService: DataService) {
+              public chatService: DataService) {
   }
 
   ngOnInit() {

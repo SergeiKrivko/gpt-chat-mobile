@@ -1,5 +1,7 @@
+<ion-action-sheet trigger="open-action-sheet-{{message?.id}}" [buttons]="actionSheetButtons"></ion-action-sheet>
+
 <div class="card" *ngIf="message" [ngClass]="{'right': message.role === 'user'}">
-  <ion-card class="bubble" [color]="message.role === 'user' ? 'tertiary' : 'medium'">
+  <ion-card class="bubble" id="open-action-sheet-{{message.id}}" [color]="message.role === 'user' ? 'tertiary' : 'medium'">
     <ion-card-content class="ion-text-wrap">
       {{ message.content }}
     </ion-card-content>

@@ -1,3 +1,15 @@
-<ion-item [routerLink]="chatLink()">
-  <ion-label>{{chat?.name}}</ion-label>
-</ion-item>
+<ion-item-sliding *ngIf="chat && chatService">
+  <ion-item [routerLink]="chatLink()">
+    <ion-icon slot="start" name="chatbox-outline" size="large"></ion-icon>
+    <ion-label>
+      <h1 class="chat-title">{{chat.name}}</h1>
+      <p class="last-message">{{chatService.chatLastMessageContent(chat.id)}}</p>
+    </ion-label>
+  </ion-item>
+  <ion-item-options slot="end">
+    <ion-item-option color="danger" expandable="true" (click)="chatService.removeChat(chat.id)">
+      Delete
+      <ion-icon slot="end" name="trash"></ion-icon>
+    </ion-item-option>
+  </ion-item-options>
+</ion-item-sliding>

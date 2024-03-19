@@ -14,7 +14,8 @@
 
 <ion-content>
   <div class="bubbles-list">
-    <app-chat-bubble *ngFor="let message of getMessages()" [message]="message"></app-chat-bubble>
+    <app-chat-bubble *ngFor="let message of getMessages()" [message]="message"
+                     [chatService]="this.chatService"></app-chat-bubble>
   </div>
 </ion-content>
 
