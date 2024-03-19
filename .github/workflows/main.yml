@@ -31,10 +31,10 @@ jobs:
 
       - name: Build with gradle
         run: |
-          chmod 755 android/gradlew
-          android/gradlew
+          cd android
+          chmod 755 gradlew
+          ./gradlew
 
       - run: |
-          ls
           ls android
 
