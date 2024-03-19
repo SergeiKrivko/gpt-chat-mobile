@@ -2,61 +2,49 @@ name: Build
 on: [push, pull_request]
 
 jobs:
-#  build-android:
-#    name: Build for Android
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Setup Node.js
-#        uses: actions/setup-node@v4
-#        with:
-#          node-version: '20.x'
-#
-#      - name: Setup Java
-#        uses: actions/setup-java@v4
-#        with:
-#          java-version: '11'
-#          distribution: 'temurin'
-#          architecture: x64
-#
-#      - name: npm install
-#        run: npm install --quiet
-#
-#      - run: npm run build
-#
-#      - run: npx cap sync android
-#
-#      - name: Build with gradle
-#        run: |
-#          cd android
-#          chmod 755 gradlew
-#          ./gradlew
-#
-#      - run: |
-#          ls android
-
   build-android:
-      runs-on: ubuntu-latest
+    name: Build for Android
+    runs-on: ubuntu-latest
 
-      env:
-        IONIC_TOKEN: ${{ secrets.IONIC_TOKEN }}
-        APP_ID: 'c1ef7ba6'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      steps:
-      - name: Install Ionic Cloud CLI
-        run: curl -sL https://ionic.io/get-ionic-cloud-cli | bash
-
-      - name: Build AAB and Save Android Build ID
-        id: android_build
-        run: |
-          ionic-cloud build android debug --app-id=$APP_ID --commit=$GITHUB_SHA --apk-name=app.apk --json --token=$IONIC_TOKEN | jq -r ".buildId"
-
-      - name: Upload AAB
-        uses: actions/upload-artifact@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          name: GPT-chat.apk
-          path: ./app.apk
+          node-version: '20.x'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          architecture: x64
+
+      - name: npm install
+        run: npm install --quiet
+
+      - run: npm run build
+
+      - run: |
+          rm -rf android
+          npx cap add android
+          npx cap sync android
+
+      - name: Build with gradle
+        run: |
+          cd android
+          chmod 755 gradlew
+          bash ./gradlew assembleDebug --stacktrace
+
+      - run: |
+          ls android
+
+      - name: Upload dev APK
+        uses: actions/upload-artifact@v1
+        with:
+          name: app-dev
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
 
