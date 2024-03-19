@@ -60,6 +60,3 @@ jobs:
           name: GPT-chat.apk
           path: ./app.apk
 
-      - name: Deploy to Play Store
-        run: ionic-cloud deploy android --app-id=$APP_ID --build-id=${{ steps.android_build.outputs.ANDROID_BUILD_ID }} --destination="$DESTINATION" --token=$IONIC_TOKEN
-
