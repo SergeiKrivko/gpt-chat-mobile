@@ -22,13 +22,17 @@ jobs:
           distribution: 'temurin'
           architecture: x64
 
-      - run: npm install
+      - name: npm install
+        run: npm install --quiet
 
       - run: npm run build
 
       - run: npx cap sync android
 
-      - run: android/gradlew
+      - name: Build with gradle
+        run: |
+          chmod 755 android/gradlew
+          android/gradlew
 
       - run: |
           ls
