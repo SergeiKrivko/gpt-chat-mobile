@@ -1,13 +1,16 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {DataService, Message} from "../../services/data.service";
+import {IonActionSheet, IonContent} from "@ionic/angular";
 
 @Component({
   selector: 'app-chat-bubble',
   templateUrl: './bubble.component.html',
   styleUrls: ['./bubble.component.scss'],
 })
-export class BubbleComponent   {
+export class BubbleComponent {
 
+  // @ts-ignore
+  @ViewChild(IonActionSheet) action_sheet: IonActionSheet;
 
   public actionSheetButtons = [
     {
@@ -55,8 +58,14 @@ export class BubbleComponent   {
     },
   ];
 
-  constructor() { }
+  constructor() {
+  }
+
   @Input() message?: Message;
   @Input() chatService?: DataService;
+
+  public onContextMenu() {
+    this.action_sheet.present()
+  }
 
 }

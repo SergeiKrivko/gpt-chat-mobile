@@ -1,9 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Chat, DataService, Message} from "../../services/data.service";
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {IonTextarea} from "@ionic/angular";
+import {IonContent, IonTextarea, IonToast} from "@ionic/angular";
 import {ActivatedRoute, ParamMap} from "@angular/router";
-import {catchError, of, switchMap, throwError} from "rxjs";
+import {catchError, Observable, of, switchMap, throwError} from "rxjs";
 
 @Component({
   selector: 'app-chat',
@@ -13,12 +13,24 @@ import {catchError, of, switchMap, throwError} from "rxjs";
 export class ChatPage implements OnInit {
   chat?: Chat;
 
-  private url: string = "/ap";
+  // @ts-ignore
+  @ViewChild(IonContent) content: IonContent;
+  // @ts-ignore
+  @ViewChild(IonToast) toast: IonToast;
+
+  private url: string = "https://www.llama2.ai/api";
 
   constructor(private http: HttpClient,
               private route: ActivatedRoute,
               public chatService: DataService) {
   }
+
+  public toastButtons = [
+    {
+      text: 'Dismiss',
+      role: 'cancel',
+    },
+  ];
 
   ngOnInit() {
     this.route.paramMap
@@ -63,7 +75,11 @@ export class ChatPage implements OnInit {
           "Content-Type": "text/plain;charset=UTF-8",
         },
         responseType: "text"
-      }).subscribe(
+      }).pipe(catchError((error: Error) => {
+      console.warn(error)
+      this.showToast(error.message as string)
+      return of(false)
+    })).subscribe(
       (data: any) => {
         console.log(data)
         if (this.chat) {
@@ -71,5 +87,16 @@ export class ChatPage implements OnInit {
         }
       }
     );
+  }
+
+  public scrollToBottom() {
+    // Passing a duration to the method makes it so the scroll slowly
+    // goes to the bottom instead of instantly
+    this.content.scrollToBottom(500);
+  }
+
+  private showToast(error: string) {
+    this.toast.message = error
+    this.toast.present()
   }
 }

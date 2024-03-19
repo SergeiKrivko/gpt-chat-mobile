@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" id="header">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button default-href="home"></ion-back-button>
@@ -17,6 +17,18 @@
     <app-chat-bubble *ngFor="let message of getMessages()" [message]="message"
                      [chatService]="this.chatService"></app-chat-bubble>
   </div>
+  <ion-button class="button-down" slot="fixed" shape="round" (click)="scrollToBottom()">
+    <ion-icon slot="icon-only" name="chevron-down"></ion-icon>
+  </ion-button>
+
+  <ion-toast
+    message="Hello World!"
+    position="top"
+    positionAnchor="header"
+    [duration]="30000"
+    [buttons]="toastButtons"
+    layout="stacked"
+  ></ion-toast>
 </ion-content>
 
 <ion-footer>
