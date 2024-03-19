@@ -2,39 +2,64 @@ name: Build
 on: [push, pull_request]
 
 jobs:
-  build-windows:
-    name: Build for Android
-    runs-on: ubuntu-latest
+#  build-android:
+#    name: Build for Android
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Node.js
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: '20.x'
+#
+#      - name: Setup Java
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: '11'
+#          distribution: 'temurin'
+#          architecture: x64
+#
+#      - name: npm install
+#        run: npm install --quiet
+#
+#      - run: npm run build
+#
+#      - run: npx cap sync android
+#
+#      - name: Build with gradle
+#        run: |
+#          cd android
+#          chmod 755 gradlew
+#          ./gradlew
+#
+#      - run: |
+#          ls android
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  build-android:
+      runs-on: ubuntu-latest
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
+      env:
+        IONIC_TOKEN: ${{ secrets.IONIC_TOKEN }}
+        APP_ID: 'c1ef7ba6'
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          architecture: x64
+      steps:
+      - name: Install Ionic Cloud CLI
+        run: curl -sL https://ionic.io/get-ionic-cloud-cli | bash
 
-      - name: npm install
-        run: npm install --quiet
-
-      - run: npm run build
-
-      - run: npx cap sync android
-
-      - name: Build with gradle
+      - name: Build AAB and Save Android Build ID
+        id: android_build
         run: |
-          cd android
-          chmod 755 gradlew
-          ./gradlew
+          ionic-cloud build android debug --app-id=$APP_ID --commit=$GITHUB_SHA --apk-name=app.apk --json --token=$IONIC_TOKEN | jq -r ".buildId"
 
-      - run: |
-          ls android
+      - name: Upload AAB
+        uses: actions/upload-artifact@v3
+        with:
+          name: GPT-chat.apk
+          path: ./app.apk
+
+      - name: Deploy to Play Store
+        run: ionic-cloud deploy android --app-id=$APP_ID --build-id=${{ steps.android_build.outputs.ANDROID_BUILD_ID }} --destination="$DESTINATION" --token=$IONIC_TOKEN
 
