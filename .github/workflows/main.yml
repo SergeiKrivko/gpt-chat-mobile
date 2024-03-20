@@ -35,7 +35,7 @@ jobs:
       - run: |
           npx cap sync android
           echo $APP_VERSION ${{ github.RUN_ATTEMPT }}
-          node_modules/.bin/capacitor-set-version -v $APP_VERSION -b ${{ github.RUN_ATTEMPT }}
+          node_modules/.bin/capacitor-set-version -v $APP_VERSION -b ${{ github.GITHUB_RUN_NUMBER }}
 
       - name: Build with gradle
         run: |
