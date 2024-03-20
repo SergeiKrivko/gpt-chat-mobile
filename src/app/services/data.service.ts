@@ -155,4 +155,9 @@ export class DataService {
       content: content
     })
   }
+
+  public deleteMessage(chat_id: string, id: string) {
+    let chat: Chat = this.chats.filter((chat: Chat) => chat.id === chat_id)[0]
+    chat.messages.splice(this.getMessageIndex(chat, id), 1)
+  }
 }

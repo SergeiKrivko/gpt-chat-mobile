@@ -1,6 +1,8 @@
 import {Component, Input, ViewChild} from '@angular/core';
 import {DataService, Message} from "../../services/data.service";
 import {IonActionSheet, IonContent} from "@ionic/angular";
+import {Share} from "@capacitor/share";
+import {Clipboard} from '@capacitor/clipboard';
 
 @Component({
   selector: 'app-chat-bubble',
@@ -67,5 +69,39 @@ export class BubbleComponent {
   public onContextMenu() {
     this.action_sheet.present()
   }
+
+  public onActionSheetDismiss(event: any) {
+    if (this.chatService && this.message && event.detail.data)
+      switch (event.detail.data.action) {
+        case "reply":
+          console.log('reply')
+          break
+        case "copy":
+          this.writeToClipboard(this.message.content)
+          break
+        case "copy-md":
+          this.writeToClipboard(this.message.content)
+          break
+        case "share":
+          this.share(this.message.content)
+          break
+        case "delete":
+          this.chatService.deleteMessage(this.message.chat_id, this.message.id)
+          break
+      }
+  }
+
+  private async share(text: string) {
+    await Share.share({
+      text: text,
+    });
+  }
+
+  private async writeToClipboard(text: string) {
+    await Clipboard.write({
+      string: text
+    });
+  }
+
 
 }

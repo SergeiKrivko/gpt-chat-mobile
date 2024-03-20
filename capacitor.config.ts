@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'com.sergeikrivko.gpt',
   appName: 'GPT-chat-mobile',
   webDir: 'www',
   server: {

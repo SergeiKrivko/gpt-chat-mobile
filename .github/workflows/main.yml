@@ -20,7 +20,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          architecture: x64
+          architecture: arm64
 
       - name: npm install
         run: npm install --quiet
@@ -28,14 +28,12 @@ jobs:
       - run: npm run build
 
       - run: |
-          rm -rf android
-          npx cap add android
           npx cap sync android
+          capacitor-set-version -v 0.0.2 -b 2
 
       - name: Build with gradle
         run: |
           cd android
-          chmod 755 gradlew
           bash ./gradlew assembleDebug --stacktrace
 
       - run: |
@@ -44,7 +42,5 @@ jobs:
       - name: Upload dev APK
         uses: actions/upload-artifact@v1
         with:
-          name: app-dev
+          name: GPT-chat.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
-
-
