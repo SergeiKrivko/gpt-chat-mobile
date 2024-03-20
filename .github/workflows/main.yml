@@ -1,6 +1,9 @@
 name: Build
 on: [push, pull_request]
 
+env:
+  APP_VERSION: 0.2.0
+
 jobs:
   build-android:
     name: Build for Android
@@ -31,18 +34,15 @@ jobs:
 
       - run: |
           npx cap sync android
-          echo ${{ github.run_id }}
-          capacitor-set-version -v 0.0.2 -b ${{ github.run_id }}
+          echo $APP_VERSION ${{ github.RUN_ATTEMPT }}
+          node_modules/.bin/capacitor-set-version -v $APP_VERSION -b ${{ github.RUN_ATTEMPT }}
 
       - name: Build with gradle
         run: |
           cd android
           bash ./gradlew assembleDebug --stacktrace
 
-      - run: |
-          ls android
-
-      - name: Upload dev APK
+      - name: Upload APK
         uses: actions/upload-artifact@v1
         with:
           name: GPT-chat.apk
