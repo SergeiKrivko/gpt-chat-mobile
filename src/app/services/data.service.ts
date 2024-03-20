@@ -29,6 +29,7 @@ export interface Message {
 })
 export class DataService {
   public chats: Chat[] = []
+  public remote_chats_loaded: boolean = false
 
   constructor(public firebaseService: FirebaseService) {
     this.firebaseService.getUser().subscribe((user: User | null) => {
@@ -73,6 +74,7 @@ export class DataService {
   }
 
   private onUserChanged(user: User | null) {
+    this.remote_chats_loaded = false
     this.clearChats()
     if (user) {
       console.log("User changed:" + user?.uid)
@@ -90,6 +92,7 @@ export class DataService {
           })
           this.onRemoteChats(chats)
         })
+        this.remote_chats_loaded = true
       })
       this.firebaseService.onEvents().subscribe((ev) => {
         ev.snapshot.forEach((chat_child) => {
