@@ -17,9 +17,9 @@
     <app-chat-bubble *ngFor="let message of getMessages()" [message]="message"
                      [chatService]="this.chatService"></app-chat-bubble>
   </div>
-  <ion-button class="button-down" slot="fixed" shape="round" (click)="scrollToBottom()">
-    <ion-icon slot="icon-only" name="chevron-down"></ion-icon>
-  </ion-button>
+  <ion-fab-button class="button-down" slot="fixed" size="small" (click)="scrollToBottom()">
+    <ion-icon name="chevron-down"></ion-icon>
+  </ion-fab-button>
 
   <ion-toast
     message="Hello World!"
