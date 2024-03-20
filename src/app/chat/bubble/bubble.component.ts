@@ -86,7 +86,7 @@ export class BubbleComponent {
           this.share(this.message.content)
           break
         case "delete":
-          this.chatService.deleteMessage(this.message.chat_id, this.message.id)
+          this.chatService.removeMessage(this.message.chat_id, this.message.id)
           break
       }
   }

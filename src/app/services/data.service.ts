@@ -3,12 +3,15 @@ import {filter, Observable, of} from "rxjs";
 import {UUID} from "angular2-uuid"
 import {FirebaseService} from "./firebase.service";
 import {User} from "@angular/fire/auth";
+import {time} from "ionicons/icons";
+import {IonDatetime} from "@ionic/angular";
 
 export interface Chat {
   id: string;
   name: string;
   messages: Message[];
   remote_last: number;
+  sync: boolean;
 }
 
 export interface Message {
@@ -16,6 +19,7 @@ export interface Message {
   chat_id: string;
   role: string;
   content: string;
+  ctime: number;
 }
 
 @Injectable({
@@ -78,6 +82,7 @@ export class DataService {
             name: child.child('name').val(),
             messages: [],
             remote_last: 0,
+            sync: true,
           })
           this.onRemoteChats(chats)
         })
@@ -112,12 +117,14 @@ export class DataService {
         id: data,
         chat_id: chat.id,
         role: 'user',
-        content: ""
+        content: "",
+        ctime: 0,
       }
       chat.messages.push(message)
       this.firebaseService.loadMessage(chat.id, data).then((snapshot) => {
         message.role = snapshot.child('role').val()
         message.content = snapshot.child('content').val()
+        message.ctime = snapshot.child('ctime').val()
       })
     } else if (type == 'delete') {
       chat.messages.splice(this.getMessageIndex(chat, data), 1)
@@ -137,6 +144,7 @@ export class DataService {
       name: "New chat",
       messages: [],
       remote_last: 0,
+      sync: true,
     })
   }
 
@@ -148,16 +156,26 @@ export class DataService {
   }
 
   public newMessage(chat_id: string, role: string, content: string) {
-    this.chats.filter((chat: Chat) => chat.id === chat_id)[0].messages.push({
+    const date = new Date();
+    let chat: Chat = this.chats.filter((chat: Chat) => chat.id === chat_id)[0]
+    let message: Message = {
       id: UUID.UUID(),
       chat_id: chat_id,
       role: role,
-      content: content
-    })
+      content: content,
+      ctime: date.getUTCSeconds(),
+    }
+    this.chats.filter((chat: Chat) => chat.id === chat_id)[0].messages.push(message)
+    if (chat.sync) {
+      this.firebaseService.addMessage(chat, message)
+    }
   }
 
-  public deleteMessage(chat_id: string, id: string) {
+  public removeMessage(chat_id: string, id: string) {
     let chat: Chat = this.chats.filter((chat: Chat) => chat.id === chat_id)[0]
     chat.messages.splice(this.getMessageIndex(chat, id), 1)
+    if (chat.sync) {
+      this.firebaseService.removeMessage(chat, id)
+    }
   }
 }

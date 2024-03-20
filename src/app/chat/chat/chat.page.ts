@@ -18,7 +18,7 @@ export class ChatPage implements OnInit {
   // @ts-ignore
   @ViewChild(IonToast) toast: IonToast;
 
-  private url: string = "https://www.llama2.ai/api";
+  private url: string = "/api";
 
   constructor(private http: HttpClient,
               private route: ActivatedRoute,

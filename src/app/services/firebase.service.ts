@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Auth, user, signInWithEmailAndPassword} from "@angular/fire/auth";
-import {Database, ref, object, get} from "@angular/fire/database";
+import {Database, ref, object, get, set, remove} from "@angular/fire/database";
+import {Chat, Message} from "./data.service";
 
 
 @Injectable({
@@ -40,5 +41,29 @@ export class FirebaseService {
 
   public loadMessage(chat_id: string, id: string) {
     return get(ref(this.db, `users/${this.auth.currentUser?.uid}/messages/${chat_id}/${id}`))
+  }
+
+  public addMessage(chat: Chat, message: Message) {
+    chat.remote_last++
+    set(ref(this.db, `users/${this.auth.currentUser?.uid}/events/${chat.id}/${chat.remote_last}`), [
+      'add', message.id
+    ])
+    set(ref(this.db, `users/${this.auth.currentUser?.uid}/events/${chat.id}-last`), chat.remote_last)
+    set(ref(this.db, `users/${this.auth.currentUser?.uid}/messages/${chat.id}/${message.id}`), {
+      id: message.id,
+      content: message.content,
+      role: message.role,
+      ctime: message.ctime,
+    })
+  }
+
+  public removeMessage(chat: Chat, message_id: string) {
+    chat.remote_last++
+    set(ref(this.db, `users/${this.auth.currentUser?.uid}/events/${chat.id}/${chat.remote_last}`), [
+      'delete', message_id
+    ])
+    set(ref(this.db, `users/${this.auth.currentUser?.uid}/events/${chat.id}-last`), chat.remote_last)
+    remove(ref(this.db, `users/${this.auth.currentUser?.uid}/messages/${chat.id}/${message_id}`))
+    // TODO: учесть ответы на сообщения
   }
 }
