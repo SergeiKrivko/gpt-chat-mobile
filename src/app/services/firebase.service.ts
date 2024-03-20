@@ -32,11 +32,11 @@ export class FirebaseService {
   }
 
   public onChats() {
-      return object(ref(this.db, `users/${this.auth.currentUser?.uid}/chats`))
+    return object(ref(this.db, `users/${this.auth.currentUser?.uid}/chats`))
   }
 
   public onEvents() {
-      return object(ref(this.db, `users/${this.auth.currentUser?.uid}/events`))
+    return object(ref(this.db, `users/${this.auth.currentUser?.uid}/events`))
   }
 
   public loadMessage(chat_id: string, id: string) {
@@ -65,5 +65,32 @@ export class FirebaseService {
     set(ref(this.db, `users/${this.auth.currentUser?.uid}/events/${chat.id}-last`), chat.remote_last)
     remove(ref(this.db, `users/${this.auth.currentUser?.uid}/messages/${chat.id}/${message_id}`))
     // TODO: учесть ответы на сообщения
+  }
+
+  public updateChat(chat: Chat) {
+    set(ref(this.db, `users/${this.auth.currentUser?.uid}/chats/${chat.id}`), {
+      id: chat.id,
+      name: chat.name,
+      model: "llama2-70b",
+      ctime: chat.ctime,
+      utime: chat.utime,
+      saved_messages: 1000,
+      used_messages: 1,
+      temperature: 0.5,
+      type: 0
+    })
+  }
+
+  public async pushChat(chat: Chat) {
+    chat.remote_last = 0
+    this.updateChat(chat)
+    await set(ref(this.db, `users/${this.auth.currentUser?.uid}/events/${chat.id}-last`), chat.remote_last)
+  }
+
+  public async removeChat(chat_id: string) {
+    await remove(ref(this.db, `users/${this.auth.currentUser?.uid}/chats/${chat_id}`))
+    await remove(ref(this.db, `users/${this.auth.currentUser?.uid}/messages/${chat_id}`))
+    await remove(ref(this.db, `users/${this.auth.currentUser?.uid}/events/${chat_id}`))
+    await remove(ref(this.db, `users/${this.auth.currentUser?.uid}/events/${chat_id}-last`))
   }
 }

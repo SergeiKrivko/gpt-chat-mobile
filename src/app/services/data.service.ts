@@ -12,6 +12,8 @@ export interface Chat {
   messages: Message[];
   remote_last: number;
   sync: boolean;
+  ctime: number;
+  utime: number;
 }
 
 export interface Message {
@@ -83,6 +85,8 @@ export class DataService {
             messages: [],
             remote_last: 0,
             sync: true,
+            ctime: child.child('ctime').val(),
+            utime: child.child('utime').val()
           })
           this.onRemoteChats(chats)
         })
@@ -139,16 +143,22 @@ export class DataService {
   }
 
   public newChat() {
+    const date = new Date();
     this.chats.push({
       id: UUID.UUID(),
       name: "New chat",
       messages: [],
       remote_last: 0,
-      sync: true,
+      sync: false,
+      ctime: date.getUTCSeconds(),
+      utime: date.getUTCSeconds(),
     })
   }
 
   public removeChat(chat_id: string) {
+    const chat: Chat = this.chats.filter((chat: Chat) => chat.id === chat_id)[0]
+    if (chat.sync)
+      this.firebaseService.removeChat(chat_id)
     const index = this.getChatIndex(chat_id)
     if (index > -1) {
       this.chats.splice(index, 1);
@@ -165,7 +175,8 @@ export class DataService {
       content: content,
       ctime: date.getUTCSeconds(),
     }
-    this.chats.filter((chat: Chat) => chat.id === chat_id)[0].messages.push(message)
+    chat.utime = date.getUTCSeconds()
+    chat.messages.push(message)
     if (chat.sync) {
       this.firebaseService.addMessage(chat, message)
     }
@@ -177,5 +188,18 @@ export class DataService {
     if (chat.sync) {
       this.firebaseService.removeMessage(chat, id)
     }
+  }
+
+  public updateChat(chat: Chat, sync: boolean) {
+    if (sync == chat.sync) {
+      if (sync)
+        this.firebaseService.updateChat(chat)
+      return
+    }
+    chat.sync = sync
+    if (sync)
+      this.firebaseService.pushChat(chat)
+    else
+      this.firebaseService.removeChat(chat.id)
   }
 }

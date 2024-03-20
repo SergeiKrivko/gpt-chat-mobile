@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Chat, DataService} from "../../services/data.service";
 import {ActivatedRoute, ParamMap} from "@angular/router";
 import {catchError, of, switchMap} from "rxjs";
+import {IonInput, IonToggle} from "@ionic/angular";
 
 @Component({
   selector: 'app-chat-settings',
@@ -10,6 +11,17 @@ import {catchError, of, switchMap} from "rxjs";
 })
 export class ChatSettingsPage implements OnInit {
   chat?: Chat;
+
+  // @ts-ignore
+  @ViewChild('name_input') name_input: IonInput;
+  // @ts-ignore
+  @ViewChild('um_input') um_input: IonInput;
+  // @ts-ignore
+  @ViewChild('sm_input') sm_input: IonInput;
+  // @ts-ignore
+  @ViewChild('t_input') t_input: IonInput;
+  // @ts-ignore
+  @ViewChild('sync_toggle') sync_toggle: IonToggle;
 
   constructor(private route: ActivatedRoute,
               private chatService: DataService) {
@@ -35,4 +47,10 @@ export class ChatSettingsPage implements OnInit {
       })
   }
 
+  public onClose() {
+    if (this.chat) {
+      this.chat.name = this.name_input.value as string
+      this.chatService.updateChat(this.chat, this.sync_toggle.checked)
+    }
+  }
 }
