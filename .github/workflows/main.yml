@@ -29,6 +29,7 @@ jobs:
 
       - run: |
           npx cap sync android
+          npm install -D capacitor-set-version
           capacitor-set-version -v 0.0.2 -b 2
 
       - name: Build with gradle
