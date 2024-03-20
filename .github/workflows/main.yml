@@ -23,7 +23,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          architecture: x64
 
       - name: npm install
         run: |
@@ -34,8 +33,8 @@ jobs:
 
       - run: |
           npx cap sync android
-          echo $APP_VERSION ${{ github.RUN_ATTEMPT }}
-          node_modules/.bin/capacitor-set-version -v $APP_VERSION -b ${{ github.GITHUB_RUN_NUMBER }}
+          echo $APP_VERSION ${{ github.RUN_NUMBER }}
+          node_modules/.bin/capacitor-set-version -v $APP_VERSION -b ${{ github.RUN_NUMBER }}
 
       - name: Build with gradle
         run: |
