@@ -1,7 +1,7 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Chat, DataService, Message} from "../../services/data.service";
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {IonContent, IonTextarea, IonToast} from "@ionic/angular";
+import {IonContent, IonTextarea, IonFabButton, IonToast, ScrollDetail} from "@ionic/angular";
 import {ActivatedRoute, ParamMap} from "@angular/router";
 import {catchError, Observable, of, switchMap, throwError} from "rxjs";
 
@@ -17,8 +17,12 @@ export class ChatPage implements OnInit {
   @ViewChild(IonContent) content: IonContent;
   // @ts-ignore
   @ViewChild(IonToast) toast: IonToast;
+  // @ts-ignore
+  @ViewChild('button_down') button_down: IonFabButton;
 
-  private url: string = "/api";
+  private url: string = "/api"
+  public scroll_top: number = 0
+  public scroll_bottom: number = 200
 
   constructor(private http: HttpClient,
               private route: ActivatedRoute,
@@ -98,5 +102,12 @@ export class ChatPage implements OnInit {
   private showToast(error: string) {
     this.toast.message = error
     this.toast.present()
+  }
+
+  public onScroll(ev: CustomEvent<ScrollDetail>) {
+    this.content.getScrollElement().then((elem) => {
+      this.scroll_top = ev.detail.scrollTop
+      this.scroll_bottom = (elem.scrollHeight - ev.detail.scrollTop - elem.offsetHeight)
+    })
   }
 }

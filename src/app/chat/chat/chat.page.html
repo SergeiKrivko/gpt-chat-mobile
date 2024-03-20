@@ -12,12 +12,14 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content
+  [scrollEvents]="true"
+  (ionScroll)="onScroll($event)">
   <div class="bubbles-list">
     <app-chat-bubble *ngFor="let message of getMessages()" [message]="message"
                      [chatService]="this.chatService"></app-chat-bubble>
   </div>
-  <ion-fab-button class="button-down" slot="fixed" size="small" (click)="scrollToBottom()">
+  <ion-fab-button *ngIf="scroll_bottom > 100" #button_down class="button-down" slot="fixed" size="small" (click)="scrollToBottom()">
     <ion-icon name="chevron-down"></ion-icon>
   </ion-fab-button>
 
