@@ -23,14 +23,16 @@ jobs:
           architecture: arm64
 
       - name: npm install
-        run: npm install --quiet
+        run: |
+          npm install --quiet
+          npm install -D capacitor-set-version
 
       - run: npm run build
 
       - run: |
           npx cap sync android
-          npm install -D capacitor-set-version
-          capacitor-set-version -v 0.0.2 -b 2
+          echo ${{ github.run_id }}
+          capacitor-set-version -v 0.0.2 -b ${{ github.run_id }}
 
       - name: Build with gradle
         run: |
