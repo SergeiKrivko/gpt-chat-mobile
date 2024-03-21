@@ -73,7 +73,7 @@ export class ChatPage implements OnInit {
     }
   }
 
-  runGPT(text: string | null | undefined) {
+  public async runGPT(text: string | null | undefined) {
     // this.http.post(this.url,
     //   {
     //     "prompt": text,
@@ -84,9 +84,20 @@ export class ChatPage implements OnInit {
     //       "Content-Type": "text/plain;charset=UTF-8",
     //     },
     //     responseType: "text"
-    //   })
+    //   }).pipe(catchError((error: Error) => {
+    //       console.warn(error)
+    //       this.showToast(error.message as string)
+    //       return of(false)
+    //     })).subscribe(
+    //       (data: any) => {
+    //         console.log(data)
+    //         if (this.chat) {
+    //           this.chatService.newMessage(this.chat.id, 'assistant', data as string)
+    //         }
+    //       }
+    //     );
 
-    from(CapacitorHttp.post({
+    let resp = await CapacitorHttp.post({
       url: this.url,
       headers: {
         "Content-Type": "text/plain;charset=UTF-8",
@@ -96,18 +107,17 @@ export class ChatPage implements OnInit {
         "model": "meta/llama-2-70b-chat",
         "maxTokens": 8000,
       }
-    })).pipe(catchError((error: Error) => {
-      console.warn(error)
-      this.showToast(error.message as string)
-      return of(false)
-    })).subscribe(
-      (data: any) => {
-        console.log(data)
-        if (this.chat) {
-          this.chatService.newMessage(this.chat.id, 'assistant', data as string)
-        }
+    })
+    if (resp.status == 200) {
+      console.log(resp.data)
+      if (this.chat) {
+        this.chatService.newMessage(this.chat.id, 'assistant', resp.data as string)
       }
-    );
+    }
+    else {
+      console.warn(resp.data)
+      this.showToast(resp.data as string)
+    }
   }
 
   public scrollToBottom() {
