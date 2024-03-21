@@ -3,7 +3,8 @@ import {Chat, DataService, Message} from "../../services/data.service";
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {IonContent, IonTextarea, IonFabButton, IonToast, ScrollDetail} from "@ionic/angular";
 import {ActivatedRoute, ParamMap} from "@angular/router";
-import {catchError, Observable, of, switchMap, throwError} from "rxjs";
+import {catchError, Observable, from, of, switchMap, throwError} from "rxjs";
+import {CapacitorHttp} from "@capacitor/core";
 
 @Component({
   selector: 'app-chat',
@@ -21,9 +22,12 @@ export class ChatPage implements OnInit {
   @ViewChild('button_down') button_down: IonFabButton;
 
   // private url: string = "/api"
+  // private url: string = "/llama"
   private url: string = "https://www.llama2.ai/api"
+
   public scroll_top: number = 0
   public scroll_bottom: number = 200
+  public searchbar_hidden: boolean = true
 
   constructor(private http: HttpClient,
               private route: ActivatedRoute,
@@ -70,17 +74,29 @@ export class ChatPage implements OnInit {
   }
 
   runGPT(text: string | null | undefined) {
-    this.http.post(this.url,
-      {
+    // this.http.post(this.url,
+    //   {
+    //     "prompt": text,
+    //     "model": "meta/llama-2-70b-chat",
+    //     "maxTokens": 8000,
+    //     }, {
+    //     headers: {
+    //       "Content-Type": "text/plain;charset=UTF-8",
+    //     },
+    //     responseType: "text"
+    //   })
+
+    from(CapacitorHttp.post({
+      url: this.url,
+      headers: {
+        "Content-Type": "text/plain;charset=UTF-8",
+      },
+      data: {
         "prompt": text,
         "model": "meta/llama-2-70b-chat",
         "maxTokens": 8000,
-      }, {
-        headers: {
-          "Content-Type": "text/plain;charset=UTF-8",
-        },
-        responseType: "text"
-      }).pipe(catchError((error: Error) => {
+      }
+    })).pipe(catchError((error: Error) => {
       console.warn(error)
       this.showToast(error.message as string)
       return of(false)
@@ -110,5 +126,9 @@ export class ChatPage implements OnInit {
       this.scroll_top = ev.detail.scrollTop
       this.scroll_bottom = (elem.scrollHeight - ev.detail.scrollTop - elem.offsetHeight)
     })
+  }
+
+  public showSearchbar() {
+    this.searchbar_hidden = !this.searchbar_hidden
   }
 }

@@ -7,7 +7,7 @@
   "id": "c1ef7ba6",
   "proxies": [
     {
-      "path": "/api",
+      "path": "/llama",
       "proxyUrl": "https://www.llama2.ai/api"
     }
   ]
