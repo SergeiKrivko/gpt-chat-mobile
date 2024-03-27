@@ -3,7 +3,7 @@ import {Chat, DataService, Message} from "../../services/data.service";
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {IonContent, IonTextarea, IonFabButton, IonToast, ScrollDetail} from "@ionic/angular";
 import {ActivatedRoute, ParamMap} from "@angular/router";
-import {catchError, Observable, from, of, switchMap, throwError} from "rxjs";
+import {catchError, from, of, switchMap, throwError} from "rxjs";
 import {CapacitorHttp} from "@capacitor/core";
 
 @Component({
@@ -113,8 +113,7 @@ export class ChatPage implements OnInit {
       if (this.chat) {
         this.chatService.newMessage(this.chat.id, 'assistant', resp.data as string)
       }
-    }
-    else {
+    } else {
       console.warn(resp.data)
       this.showToast(resp.data as string)
     }
