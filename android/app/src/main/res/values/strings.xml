@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">GPT-chat-mobile</string>
-    <string name="title_activity_main">GPT-chat-mobile</string>
+    <string name="app_name">GPT-chat</string>
+    <string name="title_activity_main">GPT-chat</string>
     <string name="package_name">com.sergeikrivko.gpt</string>
     <string name="custom_url_scheme">com.sergeikrivko.gpt</string>
 </resources>
