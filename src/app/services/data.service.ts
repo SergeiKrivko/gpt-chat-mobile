@@ -1,10 +1,8 @@
-import {Injectable, OnInit} from '@angular/core';
-import {filter, Observable, of} from "rxjs";
-import {UUID} from "angular2-uuid"
+import {Injectable} from '@angular/core';
+import {Observable, of} from "rxjs";
+import {v4 as uuid4} from 'uuid';
 import {FirebaseService} from "./firebase.service";
 import {User} from "@angular/fire/auth";
-import {time} from "ionicons/icons";
-import {IonDatetime} from "@ionic/angular";
 
 export interface Chat {
   id: string;
@@ -148,7 +146,7 @@ export class DataService {
   public newChat() {
     const date = new Date();
     this.chats.push({
-      id: UUID.UUID(),
+      id: uuid4(),
       name: "New chat",
       messages: [],
       remote_last: 0,
@@ -172,7 +170,7 @@ export class DataService {
     const date = new Date();
     let chat: Chat = this.chats.filter((chat: Chat) => chat.id === chat_id)[0]
     let message: Message = {
-      id: UUID.UUID(),
+      id: uuid4(),
       chat_id: chat_id,
       role: role,
       content: content,

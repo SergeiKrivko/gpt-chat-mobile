@@ -1,5 +1,5 @@
 {
-  "name": "GPT-chat-mobile",
+  "name": "GPT-chat",
   "integrations": {
     "capacitor": {}
   },
