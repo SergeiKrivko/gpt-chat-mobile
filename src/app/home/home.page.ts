@@ -15,6 +15,7 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
+    this.router.navigate(['signin'])
     this.data.getChats().subscribe((chats: Chat[]) => {
       this.chats = chats
     })
