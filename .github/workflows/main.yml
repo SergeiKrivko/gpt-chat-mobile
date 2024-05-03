@@ -66,10 +66,10 @@ jobs:
           npm install --quiet
           npm install -D capacitor-set-version
 
-      - run: npm run build
+      - run: npm run build --output-path docs --base-href /gpt-chat-mobile/
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./www
+          publish_dir: ./docs
