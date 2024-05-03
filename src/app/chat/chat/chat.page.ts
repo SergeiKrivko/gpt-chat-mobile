@@ -97,6 +97,11 @@ export class ChatPage implements OnInit {
     //       }
     //     );
 
+    let res = await CapacitorHttp.get({
+      url: 'https://chess.share.zrok.io'
+    })
+    console.log(res.data)
+
     let resp = await CapacitorHttp.post({
       url: this.url,
       headers: {

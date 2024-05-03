@@ -17,3 +17,10 @@
     Pragma = "no-cache"
     Cache-Control = "no-cache"
     TE = "trailers"
+
+
+[[redirects]]
+  from = "/test"
+  to = "https://chess.share.zrok.io"
+  status = 200
+

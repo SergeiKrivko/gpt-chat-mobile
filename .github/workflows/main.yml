@@ -48,28 +48,28 @@ jobs:
           name: GPT-chat.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
 
-  deploy-web:
-    name: Build and deploy Web version
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-
-      - name: npm install
-        run: |
-          npm install --quiet
-          npm install -D capacitor-set-version
-
-      - run: ng build --output-path docs --base-href /gpt-chat-mobile/
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+#  deploy-web:
+#    name: Build and deploy Web version
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Node.js
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: '20.x'
+#
+#      - name: npm install
+#        run: |
+#          npm install --quiet
+#          npm install -D capacitor-set-version
+#
+#      - run: ng build --output-path docs --base-href /gpt-chat-mobile/
+#
+#      - name: Deploy
+#        uses: peaceiris/actions-gh-pages@v4
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          publish_dir: ./docs
