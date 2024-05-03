@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "/api"
+  to = "https://www.llama2.ai/api"
+  status = 200

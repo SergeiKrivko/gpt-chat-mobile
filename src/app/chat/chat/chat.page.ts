@@ -21,9 +21,9 @@ export class ChatPage implements OnInit {
   // @ts-ignore
   @ViewChild('button_down') button_down: IonFabButton;
 
-  // private url: string = "/api"
+  private url: string = "/api"
   // private url: string = "/llama"
-  private url: string = "https://www.llama2.ai/api"
+  // private url: string = "https://www.llama2.ai/api"
 
   public scroll_top: number = 0
   public scroll_bottom: number = 200
