@@ -1,5 +1,5 @@
 [[redirects]]
-  from = "/api"
+  from = "/llama"
   to = "https://www.llama2.ai/api"
   status = 200
   [redirects.headers]
@@ -7,8 +7,7 @@
     Accept = "*/*"
     Accept-Language = "de,en-US;q=0.7,en;q=0.3"
     Accept-Encoding = "gzip, deflate, br"
-    Referer = "https://www.llama2.ai"
-    Content-Type = "text/plain;charset=UTF-8"
+    Referer = "https://www.llama2.ai/"
     Origin = "https://www.llama2.ai"
     Connection = "keep-alive"
     Sec-Fetch-Dest = "empty"

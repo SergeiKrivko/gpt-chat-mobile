@@ -21,8 +21,8 @@ export class ChatPage implements OnInit {
   // @ts-ignore
   @ViewChild('button_down') button_down: IonFabButton;
 
-  private url: string = "/api"
-  // private url: string = "/llama"
+  // private url: string = "/api"
+  private url: string = "/llama"
   // private url: string = "https://www.llama2.ai/api"
 
   public scroll_top: number = 0
@@ -96,11 +96,6 @@ export class ChatPage implements OnInit {
     //         }
     //       }
     //     );
-
-    let res = await CapacitorHttp.get({
-      url: '/test'
-    })
-    console.log(res.data)
 
     let resp = await CapacitorHttp.post({
       url: this.url,
