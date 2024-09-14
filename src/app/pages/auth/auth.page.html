@@ -1,0 +1,12 @@
+<div class="auth-container">
+  <h2>Авторизация</h2>
+  <div class="sign-in-container">
+    <ion-card>
+      <ion-input placeholder="Email" [(ngModel)]="email"></ion-input>
+    </ion-card>
+    <ion-card>
+      <ion-input type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
+    </ion-card>
+    <ion-button (click)="signIn()">Войти</ion-button>
+  </div>
+</div>

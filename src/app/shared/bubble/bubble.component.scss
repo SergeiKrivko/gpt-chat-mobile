@@ -1,0 +1,20 @@
+.card {
+  display: flex;
+}
+
+.right {
+  justify-content: end;
+
+  .bubble {
+    border-radius: 10px 10px 0 10px;
+  }
+}
+
+.card-content {
+  padding: 10px 20px 10px 30px;
+}
+
+.bubble {
+  border-radius: 10px 10px 10px 0;
+  max-width: 80%;
+}
