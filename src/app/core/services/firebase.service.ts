@@ -26,6 +26,10 @@ export class FirebaseService {
     this.auth.signOut().then(r => console.log("Signed Out"))
   }
 
+  getUser() {
+    return this.auth.currentUser;
+  }
+
   userChanged$ =  user(this.auth)
 
   tokenChanged$ = idToken(this.auth)

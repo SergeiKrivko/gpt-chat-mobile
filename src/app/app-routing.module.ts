@@ -3,6 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import {HomePage} from "./pages/home/home.page";
 import {AuthPage} from "./pages/auth/auth.page";
 import {ChatPage} from "./pages/chat/chat.page";
+import {SettingsPage} from "./pages/settings/settings-page.component";
 
 const routes: Routes = [
   {
@@ -35,10 +36,10 @@ const routes: Routes = [
   //   path: 'signup',
   //   loadChildren: () => import('./auth/signup/signup.module').then( m => m.SignupPageModule)
   // },
-  // {
-  //   path: 'settings',
-  //   loadChildren: () => import('./settings/settings.module').then( m => m.SettingsPageModule)
-  // },
+  {
+    path: 'settings',
+    component: SettingsPage,
+  },
 ];
 
 @NgModule({

@@ -16,6 +16,7 @@ import {ChatItemComponent} from "./shared/chat-item/chat-item.component";
 import {BubbleComponent} from "./shared/bubble/bubble.component";
 import {FormsModule} from "@angular/forms";
 import {MarkdownComponent, provideMarkdown} from "ngx-markdown";
+import {SettingsPage} from "./pages/settings/settings-page.component";
 
 const firebase_config = {
   apiKey: "AIzaSyA8z4fe_VedzuLvLQk9HnQTFnVeJDRdxkc",
@@ -31,7 +32,7 @@ const firebase_config = {
 const config: SocketIoConfig = { url: 'http://api.nachert.art:8151/', options: {} };
 
 @NgModule({
-  declarations: [AppComponent, HomePage, AuthPage, ChatPage, BubbleComponent],
+  declarations: [AppComponent, HomePage, AuthPage, ChatPage, BubbleComponent, SettingsPage],
   imports: [
     BrowserModule, IonicModule.forRoot(), AppRoutingModule, SocketIoModule.forRoot(config), ChatItemComponent, FormsModule, MarkdownComponent
   ],
