@@ -27,6 +27,11 @@ export class HomePage implements OnInit {
         void this.router.navigate(['/auth']);
       }
     })
+
+    if (!this.authService.getUser() || !this.authService.getUser()?.email) {
+      void this.router.navigate(['/auth']);
+    }
+
     this.chatsService.newChats$.subscribe();
     this.chatsService.deleteChats$.subscribe();
     this.chatsService.newMessages$.subscribe();
