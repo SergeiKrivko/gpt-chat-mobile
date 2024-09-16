@@ -17,6 +17,7 @@ import {BubbleComponent} from "./shared/bubble/bubble.component";
 import {FormsModule} from "@angular/forms";
 import {MarkdownComponent, provideMarkdown} from "ngx-markdown";
 import {SettingsPage} from "./pages/settings/settings-page.component";
+import {provideHttpClient} from "@angular/common/http";
 
 const firebase_config = {
   apiKey: "AIzaSyA8z4fe_VedzuLvLQk9HnQTFnVeJDRdxkc",
@@ -41,6 +42,7 @@ const config: SocketIoConfig = { url: 'http://api.nachert.art:8151/', options: {
     provideFirebaseApp(() => initializeApp(firebase_config)),
     provideAuth(() => getAuth()),
     provideMarkdown(),
+    provideHttpClient(),
   ],
   bootstrap: [AppComponent],
 })

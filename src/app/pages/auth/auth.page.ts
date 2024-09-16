@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {FirebaseService} from "../../core/services/firebase.service";
 import {Router} from "@angular/router";
+import {AuthService} from "../../core/services/auth.service";
+import {catchError, EMPTY} from "rxjs";
+import {SocketService} from "../../core/services/socket.service";
 
 @Component({
   selector: 'app-auth',
@@ -10,20 +12,29 @@ import {Router} from "@angular/router";
 export class AuthPage implements OnInit {
   email: string = "";
   password: string = "";
+  error: string = "";
 
   constructor(private readonly router: Router,
-              private readonly authService: FirebaseService) { }
+              private readonly authService: AuthService,
+              private readonly socket: SocketService) { }
 
   ngOnInit() {
-    this.authService.userChanged$.subscribe(user => {
-      if (user !== null) {
-        void this.router.navigate(['/home']);
-      }
-    })
+    // this.authService.userChanged$.subscribe(user => {
+    //   if (user !== null) {
+    //     void this.router.navigate(['/home']);
+    //   }
+    // })
   }
 
   signIn() {
-    this.authService.signIn(this.email, this.password);
+    this.authService.signInWithPassword(this.email, this.password).pipe(catchError(err => {
+      console.log(err)
+      this.error = err['error']['error']['message'];
+      return EMPTY;
+    })).subscribe(() => {
+      this.error = ""
+      void this.router.navigate(['/home']);
+    });
   }
 
 }

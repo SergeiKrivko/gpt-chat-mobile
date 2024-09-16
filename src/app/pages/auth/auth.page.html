@@ -5,8 +5,9 @@
       <ion-input placeholder="Email" [(ngModel)]="email"></ion-input>
     </ion-card>
     <ion-card>
-      <ion-input type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
+      <ion-input type="password" placeholder="Пароль" [(ngModel)]="password"></ion-input>
     </ion-card>
+    <ion-label *ngIf="error" color="danger">{{ error }}</ion-label>
     <ion-button (click)="signIn()">Войти</ion-button>
   </div>
 </div>

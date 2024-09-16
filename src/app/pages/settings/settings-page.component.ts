@@ -1,5 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {FirebaseService} from "../../core/services/firebase.service";
+import {AuthService} from "../../core/services/auth.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-settings',
@@ -8,12 +9,14 @@ import {FirebaseService} from "../../core/services/firebase.service";
 })
 export class SettingsPage implements OnInit {
 
-  readonly authService = inject(FirebaseService);
+  readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   ngOnInit() {}
 
   signOut() {
     this.authService.signOut();
+    void this.router.navigate(['/auth']);
   }
 
 }
