@@ -18,6 +18,7 @@ import {FormsModule} from "@angular/forms";
 import {MarkdownComponent, provideMarkdown} from "ngx-markdown";
 import {SettingsPage} from "./pages/settings/settings-page.component";
 import {provideHttpClient} from "@angular/common/http";
+import {IonicStorageModule} from "@ionic/storage-angular";
 
 const firebase_config = {
   apiKey: "AIzaSyA8z4fe_VedzuLvLQk9HnQTFnVeJDRdxkc",
@@ -30,13 +31,20 @@ const firebase_config = {
   measurementId: "G-J9JR3WD37F"
 }
 
-// const config: SocketIoConfig = { url: 'http://api.nachert.art:8151/' };
-const config: SocketIoConfig = { url: 'http://localhost:8000/' };
+const config: SocketIoConfig = { url: 'https://gptchat-api.nachert.art/' };
+// const config: SocketIoConfig = {url: 'http://localhost:8000/'};
 
 @NgModule({
   declarations: [AppComponent, HomePage, AuthPage, ChatPage, BubbleComponent, SettingsPage],
   imports: [
-    BrowserModule, IonicModule.forRoot(), AppRoutingModule, SocketIoModule.forRoot(config), ChatItemComponent, FormsModule, MarkdownComponent
+    BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
+    SocketIoModule.forRoot(config),
+    ChatItemComponent,
+    FormsModule,
+    MarkdownComponent,
+    IonicStorageModule.forRoot()
   ],
   providers: [
     {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},

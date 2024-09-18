@@ -9,8 +9,9 @@ import {Router} from "@angular/router";
 })
 export class SettingsPage implements OnInit {
 
-  readonly authService = inject(AuthService);
+  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  protected readonly user$ = this.authService.user$;
 
   ngOnInit() {}
 

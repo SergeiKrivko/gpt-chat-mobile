@@ -1,11 +1,7 @@
-import {inject, Injectable, OnInit} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {Socket} from "ngx-socket-io";
 import {EMPTY, map, merge, switchMap, tap} from "rxjs";
-import {Chat} from "../models/chat";
-import {Updates} from "../models/updates";
 import {SocketResp} from "../models/socket_resp";
-import {Message} from "../models/message";
-import {MessageAddContent} from "../models/message_add_content";
 import {AuthService} from "./auth.service";
 
 @Injectable({
@@ -14,23 +10,26 @@ import {AuthService} from "./auth.service";
 export class SocketService {
 
   private readonly socket: Socket = inject(Socket)
-  // private readonly authService: FirebaseService = inject(FirebaseService);
+  private readonly authService = inject(AuthService);
 
   private connected: boolean = false;
 
   init() {
-    // const pipe2 = this.authService.userChanged$.pipe(tap(user => {
-    //   this.socket.disconnect()
-    //   this.connected = false;
-    //   if (user) {
-    //     user.getIdToken().then(token => this.socket.ioSocket['auth'] = token);
-    //     this.connect();
-    //   }
-    // }))
-    // const pipe1 = this.authService.tokenChanged$.pipe(tap(token => {
-    //   this.socket.ioSocket['auth'] = token;
-    // }))
-    // return merge(pipe1, pipe2).pipe(switchMap(() => EMPTY))
+    const pipe2 = this.authService.userChanged$.pipe(
+      tap(user => {
+        this.disconnect();
+        if (user && user.token) {
+          this.socket.ioSocket['auth'] = user.token;
+          this.connect();
+        }
+      })
+    );
+    const pipe1 = this.authService.token$.pipe(
+      tap(token => {
+        this.socket.ioSocket['auth'] = token;
+      })
+    );
+    return merge(pipe1, pipe2).pipe(switchMap(() => EMPTY));
   }
 
   disconnect() {
@@ -38,13 +37,7 @@ export class SocketService {
     this.connected = false;
   }
 
-  connect(token: string | null | undefined) {
-    if (token !== undefined)
-    {
-      this.socket.ioSocket['auth'] = token
-      if (token === null)
-        return;
-    }
+  connect() {
     console.log("Connecting...")
     if (!this.connected) {
       this.socket.connect(err => {
@@ -54,29 +47,11 @@ export class SocketService {
     this.socket.emit('updates_request', '2001-01-01T00:00:00.000000')
   }
 
-  private fromEvent<T>(key: string){
-    return this.socket.fromEvent<SocketResp<T>>(key).pipe(map(resp => {
-      return resp.data;
-    }));
+  fromEvent<T>(key: string) {
+    return this.socket.fromEvent<SocketResp<T>>(key).pipe(map(resp => resp.data));
   }
 
-  newChats$ = this.fromEvent<Chat[]>('new_chats');
-
-  deleteChats$ = this.fromEvent<string[]>('delete_chats');
-
-  newMessages$ = this.fromEvent<Message[]>('new_messages');
-
-  deleteMessages$ = this.fromEvent<string[]>('delete_messages');
-
-  messageAddContent$ = this.fromEvent<MessageAddContent>('message_add_content');
-
-  updates$ = this.fromEvent<Updates>('updates_response');
-
-  newMessage(chatId: string, role: string, content: string) {
-    this.socket.emit('new_message', {
-      chat_uuid: chatId,
-      role: role,
-      content: content
-    })
+  emit(key: string, ...data: any) {
+    this.socket.emit(key, ...data);
   }
 }

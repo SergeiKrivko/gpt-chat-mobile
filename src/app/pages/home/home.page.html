@@ -16,6 +16,8 @@
 
 <ion-content>
   <ion-list>
-    <app-chat-item *ngFor="let chat of chats" [chat]="chat"/>
+    @for (chat of chats$ | async; track chat) {
+      <app-chat-item [chat]="chat"/>
+    }
   </ion-list>
 </ion-content>

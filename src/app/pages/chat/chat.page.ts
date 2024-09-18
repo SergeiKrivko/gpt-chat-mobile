@@ -3,6 +3,7 @@ import {IonContent, IonToast, ScrollDetail} from "@ionic/angular";
 import {ActivatedRoute} from "@angular/router";
 import {Chat} from "../../core/models/chat";
 import {ChatsService} from "../../core/services/chats.service";
+import {Observable} from "rxjs";
 import {Message} from "../../core/models/message";
 
 @Component({
@@ -12,7 +13,7 @@ import {Message} from "../../core/models/message";
 })
 export class ChatPage implements OnInit {
   chat?: Chat;
-  messages: Message[] = [];
+  protected readonly messages$: Observable<Message[]>;
   text: string = "";
 
   @ViewChild(IonContent) private readonly content: IonContent | undefined;
@@ -25,6 +26,15 @@ export class ChatPage implements OnInit {
 
   constructor(private readonly chatsService: ChatsService,
               private route: ActivatedRoute) {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.chatsService.getChat(id).subscribe(chat => {
+        if (chat) {
+          this.chat = chat
+        }
+      });
+    }
+    this.messages$ = this.chatsService.getMessages(id ?? "");
   }
 
   public toastButtons = [
@@ -35,11 +45,14 @@ export class ChatPage implements OnInit {
   ];
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.chat = this.chatsService.getChat(id);
-      this.chatsService.getMessages(id).subscribe(messages => this.messages = messages);
-    }
+    // const id = this.route.snapshot.paramMap.get('id');
+    // if (id) {
+    //   this.chatsService.getChat(id).subscribe(chat => {
+    //     if (chat) {
+    //       this.chat = chat
+    //     }
+    //   });
+    // }
   }
 
   sendMessage() {

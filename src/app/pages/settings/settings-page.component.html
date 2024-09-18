@@ -7,8 +7,11 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-label>{{ authService.userEmail }}</ion-label>
-  <ion-button (click)="signOut()">Exit</ion-button>
-</ion-content>
+@if (user$ | async; as user) {
+  <ion-content>
+    <ion-label>{{ user.email }}</ion-label>
+    <ion-button (click)="signOut()">Exit</ion-button>
+  </ion-content>
+}
+
 

@@ -1,8 +1,18 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {tap} from "rxjs";
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  from,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  switchMap,
+} from "rxjs";
 import {SignInResponse} from "../models/sign_in_resp";
-import {SocketService} from "./socket.service";
+import {User} from "../models/user";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -10,13 +20,23 @@ import {SocketService} from "./socket.service";
 export class AuthService {
 
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
   private readonly firebaseApiKey = "AIzaSyA8z4fe_VedzuLvLQk9HnQTFnVeJDRdxkc";
 
-  userEmail: string | null = null;
-  idToken: string | null = null;
-  refreshToken: string | null = null;
-
-  private readonly socketService = inject(SocketService);
+  private readonly user$$: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
+  user$: Observable<User | null> = this.user$$.pipe(
+    shareReplay(1)
+  );
+  userChanged$: Observable<User | null> = this.user$.pipe(
+    distinctUntilChanged((previous, current) => previous?.uid !== current?.uid),
+    switchMap(user => {
+      if (user === null) {
+        return from(this.router.navigateByUrl('/auth')).pipe(map(() => null))
+      }
+      return of(user);
+    })
+  );
+  token$: Observable<string | null> = this.user$.pipe(map(user => user?.token ?? null), distinctUntilChanged());
 
   signInWithPassword(login: string, password: string) {
     return this.http.post<SignInResponse>(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${this.firebaseApiKey}`,
@@ -24,22 +44,18 @@ export class AuthService {
         email: login,
         password: password,
         returnSecureToken: true,
-      }).pipe(tap(resp => {
-      this.setUser(resp.email, resp.idToken, resp.refreshToken);
-    }));
-  }
-
-  private setUser(email: string | null, idToken: string | null, refreshToken: string | null) {
-    this.userEmail = email;
-    this.idToken = idToken;
-    this.refreshToken = refreshToken;
-
-    this.socketService.disconnect()
-    if (idToken)
-      this.socketService.connect(this.idToken)
+      }).pipe(
+      map(resp => {
+        this.user$$.next({
+          uid: resp.uid,
+          email: resp.email,
+          token: resp.idToken,
+          refreshToken: resp.refreshToken,
+        });
+      }));
   }
 
   signOut() {
-    this.setUser(null, null, null)
+    this.user$$.next(null)
   }
 }

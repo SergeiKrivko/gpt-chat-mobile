@@ -30,9 +30,11 @@
   [scrollEvents]="true"
   (ionScroll)="onScroll($event)">
   <div class="bubbles-list">
-    <app-chat-bubble *ngFor="let message of messages" [message]="message"></app-chat-bubble>
+    @for (message of messages$ | async; track message) {
+      <app-chat-bubble [message]="message"></app-chat-bubble>
+    }
   </div>
-  <ion-fab-button *ngIf="scroll_bottom > 100" class="button-down" slot="fixed" size="small"
+  <ion-fab-button [hidden]="scroll_bottom <= 100" class="button-down" slot="fixed" size="small"
                   (click)="scrollToBottom()">
     <ion-icon name="chevron-down"></ion-icon>
   </ion-fab-button>
