@@ -58,12 +58,12 @@ export class ChatsService {
   private readonly messageAddContent$ = this.socketService.fromEvent<MessageAddContent>('message_add_content').pipe(
     tap(content => {
       const newMap = new Map<string, Message[]>(this.allMessages$$.value);
-      const message = newMap.get(content.chat_uuid)?.find(message => message.uuid === content.uuid);
+      const message = newMap.get(content.chat)?.find(message => message.uuid === content.uuid);
       if (message) {
         message.content += content.content;
         this.allMessages$$.next(newMap);
       } else {
-        console.warn(`Adding to no exist message ${content.uuid} (chat ${content.chat_uuid})`);
+        console.warn(`Adding to no exist message ${content.uuid} (chat ${content.chat})`);
       }
     })
   );
@@ -92,6 +92,6 @@ export class ChatsService {
       chat_uuid: chatId,
       role: 'user',
       content: content
-    });
+    }, true);
   }
 }

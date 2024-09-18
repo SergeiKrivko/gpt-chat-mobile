@@ -1,5 +1,5 @@
 export interface MessageAddContent {
   uuid: string;
-  chat_uuid: string;
+  chat: string;
   content: string;
 }
