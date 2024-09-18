@@ -18,6 +18,10 @@ export class ChatsService {
     return of(this.chats);
   }
 
+  getChat(chatId: string) {
+    return this.chats.filter(chat => chat.uuid == chatId)[0];
+  }
+
   getMessages(chatId: string) {
     if (!(chatId in this.messages))
       this.messages[chatId] = [];
@@ -55,4 +59,8 @@ export class ChatsService {
     })
     updates.new_messages.forEach(message => this.messages[message.chat_uuid].push(message))
   }))
+
+  newMessage(chatId: string, content: string) {
+    this.socketService.newMessage(chatId, 'user', content);
+  }
 }

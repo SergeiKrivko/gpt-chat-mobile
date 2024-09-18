@@ -49,7 +49,7 @@
 
 <ion-footer>
   <ion-toolbar>
-    <ion-textarea [autoGrow]="true" placeholder="Message..." class="chat-input-area"></ion-textarea>
+    <ion-textarea [autoGrow]="true" placeholder="Message..." [(ngModel)]="text" class="chat-input-area"></ion-textarea>
     <ion-buttons slot="end">
       <ion-button (click)="sendMessage()">
         <ion-icon slot="icon-only" name="send"></ion-icon>

@@ -30,7 +30,8 @@ const firebase_config = {
   measurementId: "G-J9JR3WD37F"
 }
 
-const config: SocketIoConfig = { url: 'http://api.nachert.art:8151/', options: {} };
+// const config: SocketIoConfig = { url: 'http://api.nachert.art:8151/' };
+const config: SocketIoConfig = { url: 'http://localhost:8000/' };
 
 @NgModule({
   declarations: [AppComponent, HomePage, AuthPage, ChatPage, BubbleComponent, SettingsPage],

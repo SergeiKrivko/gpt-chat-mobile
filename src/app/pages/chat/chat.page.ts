@@ -13,6 +13,7 @@ import {Message} from "../../core/models/message";
 export class ChatPage implements OnInit {
   chat?: Chat;
   messages: Message[] = [];
+  text: string = "";
 
   @ViewChild(IonContent) private readonly content: IonContent | undefined;
 
@@ -35,16 +36,17 @@ export class ChatPage implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    console.log(`Id: ${id}`)
-    if (id)
+    if (id) {
+      this.chat = this.chatsService.getChat(id);
       this.chatsService.getMessages(id).subscribe(messages => this.messages = messages);
+    }
   }
 
   sendMessage() {
-    // if (this.chat && textarea.value) {
-    //   // this.chatService.newMessage(this.chat.id, 'user', textarea.value as string)
-    //   textarea.value = "";
-    // }
+    if (this.chat && this.text) {
+      this.chatsService.newMessage(this.chat.uuid, this.text)
+      this.text = "";
+    }
   }
 
   public scrollToBottom() {

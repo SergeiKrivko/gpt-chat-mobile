@@ -71,4 +71,12 @@ export class SocketService {
   messageAddContent$ = this.fromEvent<MessageAddContent>('message_add_content');
 
   updates$ = this.fromEvent<Updates>('updates_response');
+
+  newMessage(chatId: string, role: string, content: string) {
+    this.socket.emit('new_message', {
+      chat_uuid: chatId,
+      role: role,
+      content: content
+    })
+  }
 }
