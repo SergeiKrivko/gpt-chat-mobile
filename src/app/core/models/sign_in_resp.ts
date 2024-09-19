@@ -1,6 +1,7 @@
 export interface SignInResponse {
-  uid: string;
+  localId: string;
   email: string;
   idToken: string;
   refreshToken: string;
+  expiresIn: number;
 }

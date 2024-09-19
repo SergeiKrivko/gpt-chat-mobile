@@ -3,4 +3,5 @@ export interface User {
   token: string;
   refreshToken: string;
   email: string;
+  expireAt: Date;
 }
