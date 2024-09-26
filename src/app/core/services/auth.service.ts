@@ -43,15 +43,14 @@ export class AuthService {
   token$: Observable<string | null> = this.user$.pipe(
     map(user => user?.token ?? null),
     distinctUntilChanged(),
-    tap(token => console.log("Token changed:", token)),
+    // tap(token => console.log("Token changed:", token)),
   );
 
   private readonly refreshLooper$ = interval(1000).pipe(
     withLatestFrom(this.user$),
     switchMap(([_, user]) => {
       if (user)
-        console.log("Expire after", user.expireAt.getTime() - 3500000 - Date.now());
-      if (user && user.expireAt.getTime() - 3500000 - Date.now() < 10000) {
+      if (user && user.expireAt.getTime() - Date.now() < 10000) {
         return this.refreshToken(user);
       }
       return EMPTY;

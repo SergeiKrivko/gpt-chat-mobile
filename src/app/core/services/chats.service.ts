@@ -94,4 +94,12 @@ export class ChatsService {
       content: content
     }, true);
   }
+
+  newChat() {
+    this.socketService.emit('new_chat');
+  }
+
+  deleteChat(id: string){
+    this.socketService.emit('delete_chat', id);
+  }
 }

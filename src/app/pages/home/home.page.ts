@@ -31,5 +31,6 @@ export class HomePage implements OnInit {
   }
 
   public addChat() {
+    this.chatsService.newChat();
   }
 }

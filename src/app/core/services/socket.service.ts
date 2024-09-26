@@ -44,14 +44,18 @@ export class SocketService {
         console.error(err)
       })
     }
-    this.socket.emit('updates_request', '2001-01-01T00:00:00.000000')
+    this.emit('updates_request', '2001-01-01T00:00:00.000000')
   }
 
   fromEvent<T>(key: string) {
-    return this.socket.fromEvent<SocketResp<T>>(key).pipe(map(resp => resp.data));
+    return this.socket.fromEvent<SocketResp<T>>(key).pipe(
+      tap(() => console.debug(`Socket '${key}' received`)),
+      map(resp => resp.data),
+    );
   }
 
   emit(key: string, ...data: any) {
+    console.debug(`Emitting socket '${key}'...`);
     this.socket.emit(key, ...data);
   }
 }

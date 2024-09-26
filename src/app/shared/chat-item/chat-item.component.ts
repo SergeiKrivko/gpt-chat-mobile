@@ -1,8 +1,9 @@
-import {Component, Input} from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import {IonicModule} from "@ionic/angular";
 import {RouterLink} from "@angular/router";
 import {NgIf} from "@angular/common";
 import {Chat} from "../../core/models/chat";
+import {ChatsService} from "../../core/services/chats.service";
 
 @Component({
   selector: 'app-chat-item',
@@ -18,7 +19,15 @@ import {Chat} from "../../core/models/chat";
 export class ChatItemComponent {
   @Input() chat?: Chat
 
+  private readonly chatsService = inject(ChatsService);
+
   public chatLink(): string {
     return this.chat ? `/chat/${this.chat.uuid}` : ''
+  }
+
+  deleteChat() {
+    if (this.chat) {
+      this.chatsService.deleteChat(this.chat?.uuid)
+    }
   }
 }
