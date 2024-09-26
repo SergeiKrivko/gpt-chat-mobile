@@ -1,16 +1,17 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {IonActionSheet} from "@ionic/angular";
 import {Share} from "@capacitor/share";
 import {Clipboard} from '@capacitor/clipboard';
 import {Message} from "../../core/models/message";
 import {ChatsService} from "../../core/services/chats.service";
+import {Reply} from "../../core/models/reply";
 
 @Component({
   selector: 'app-chat-bubble',
   templateUrl: './bubble.component.html',
   styleUrls: ['./bubble.component.scss'],
 })
-export class BubbleComponent {
+export class BubbleComponent implements OnInit {
 
   @ViewChild(IonActionSheet) action_sheet: IonActionSheet | undefined;
 
@@ -61,20 +62,33 @@ export class BubbleComponent {
   ];
 
   @Input() message?: Message;
+  @Output() replyClicked = new EventEmitter();
   private holdTimeout: any;
 
+  protected reply: Reply[] = [];
+
   constructor(private readonly chatsService: ChatsService) {
+  }
+
+  ngOnInit() {
+    this.reply = this.message?.reply.filter(r => r.type == 'explicit') ?? [];
   }
 
   public onContextMenu() {
     void this.action_sheet?.present()
   }
 
+  protected getMessage(id: string): Message | null {
+    if (this.message)
+      return this.chatsService.getMessage(this.message?.chat_uuid, id) ?? null;
+    return null;
+  }
+
   public onActionSheetDismiss(event: any) {
     if (this.message && event.detail.data)
       switch (event.detail.data.action) {
         case "reply":
-          console.log('reply')
+          this.replyClicked.emit();
           break
         case "copy":
           this.writeToClipboard(this.message.content)
@@ -92,13 +106,13 @@ export class BubbleComponent {
   }
 
   private share(text: string) {
-    Share.share({
+    void Share.share({
       text: text,
     });
   }
 
   private writeToClipboard(text: string) {
-    Clipboard.write({
+    void Clipboard.write({
       string: text
     });
   }
@@ -111,4 +125,5 @@ export class BubbleComponent {
     clearTimeout(this.holdTimeout);
   }
 
+  protected readonly ChatsService = ChatsService;
 }

@@ -5,6 +5,8 @@ import {Chat} from "../../core/models/chat";
 import {ChatsService} from "../../core/services/chats.service";
 import {Observable} from "rxjs";
 import {Message} from "../../core/models/message";
+import {Reply} from "../../core/models/reply";
+import {ReplyCreate} from "../../core/models/reply_create";
 
 @Component({
   selector: 'app-chat',
@@ -15,6 +17,7 @@ export class ChatPage implements OnInit {
   chat?: Chat;
   protected readonly messages$: Observable<Message[]>;
   text: string = "";
+  reply: ReplyCreate[] = [];
 
   @ViewChild(IonContent) private readonly content: IonContent | undefined;
 
@@ -61,9 +64,10 @@ export class ChatPage implements OnInit {
 
   sendMessage() {
     if (this.chat && this.text) {
-      this.chatsService.newMessage(this.chat.uuid, this.text)
+      this.chatsService.newMessage(this.chat.uuid, this.text, this.reply)
       this.text = "";
-    }
+    };
+    this.reply = [];
   }
 
   public scrollToBottom() {
@@ -84,6 +88,19 @@ export class ChatPage implements OnInit {
       this.scroll_top = ev.detail.scrollTop
       this.scroll_bottom = (elem.scrollHeight - ev.detail.scrollTop - elem.offsetHeight)
     })
+  }
+
+  onReplyClicked(id: string){
+    if (this.reply.filter(r => r.reply_to == id).length)
+      return;
+    this.reply.push({
+      reply_to: id,
+      type: 'explicit',
+    });
+  }
+
+  removeReply(id: string) {
+    this.reply = this.reply.filter(r => r.reply_to !== id);
   }
 
   public showSearchbar() {

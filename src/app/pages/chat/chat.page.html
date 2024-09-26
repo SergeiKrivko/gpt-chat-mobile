@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>{{chat?.name}}</ion-title>
+    <ion-title>{{ chat?.name }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="showSearchbar()">
         <ion-icon slot="icon-only" name="search"></ion-icon>
@@ -31,7 +31,7 @@
   (ionScroll)="onScroll($event)">
   <div class="bubbles-list">
     @for (message of messages$ | async; track message) {
-      <app-chat-bubble [message]="message"></app-chat-bubble>
+      <app-chat-bubble [message]="message" (replyClicked)="onReplyClicked(message.uuid)"></app-chat-bubble>
     }
   </div>
   <ion-fab-button [hidden]="scroll_bottom <= 100" class="button-down" slot="fixed" size="small"
@@ -50,6 +50,19 @@
 </ion-content>
 
 <ion-footer>
+  @if (reply.length) {
+    <ion-toolbar class="reply-toolbar">
+      @for (reply of this.reply; track reply) {
+        <ion-button size="small" expand="block">
+          <ion-icon name="arrow-undo-outline"></ion-icon>
+          <span>{{ reply.reply_to }}</span>
+          <ion-button (click)="removeReply(reply.reply_to)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-button>
+      }
+    </ion-toolbar>
+  }
   <ion-toolbar>
     <ion-textarea [autoGrow]="true" placeholder="Message..." [(ngModel)]="text" class="chat-input-area"></ion-textarea>
     <ion-buttons slot="end">

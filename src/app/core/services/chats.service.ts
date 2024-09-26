@@ -6,6 +6,7 @@ import {Message} from "../models/message";
 import {MessageAddContent} from "../models/message_add_content";
 import {Updates} from "../models/updates";
 import {StorageService} from "./storage.service";
+import {ReplyCreate} from "../models/reply_create";
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +40,10 @@ export class ChatsService {
         (m1, m2) => m1.created_at > m2.created_at ? 1 : -1
       ) ?? []),
     );
+  }
+
+  getMessage(chatId: string, id: string){
+    return this.allMessages$$.value.get(chatId)?.filter(m => m.uuid == id)[0];
   }
 
   private readonly newChats$ = this.socketService.fromEvent<Chat[]>('new_chats').pipe(
@@ -125,11 +130,12 @@ export class ChatsService {
     ).pipe(switchMap(() => EMPTY))
   }
 
-  newMessage(chatId: string, content: string) {
+  newMessage(chatId: string, content: string, reply: ReplyCreate[] = []) {
     this.socketService.emit('new_message', {
       chat_uuid: chatId,
       role: 'user',
-      content: content
+      content: content,
+      reply: reply,
     }, true);
   }
 

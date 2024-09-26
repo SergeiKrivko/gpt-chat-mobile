@@ -4,8 +4,18 @@
   <ion-card class="bubble" (dblclick)="onContextMenu()"
             (touchstart)="onTouchStart()" (touchend)="onTouchEnd()"
             [color]="message.role === 'user' ? 'tertiary' : 'medium'">
+    @if (reply.length) {
+      <div class="reply-container">
+        @for (reply of reply; track reply) {
+          <ion-button>
+            <ion-icon name="arrow-undo-outline"></ion-icon>
+            <span class="reply-content">{{ getMessage(reply.reply_to)?.content }}</span>
+          </ion-button>
+        }
+      </div>
+    }
+
     <ion-card-content class="card-content">
-      <!--      {{ message.content }}-->
       <markdown>
         {{ message.content }}
       </markdown>
