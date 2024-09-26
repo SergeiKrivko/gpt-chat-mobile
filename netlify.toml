@@ -19,7 +19,25 @@
 
 
 [[redirects]]
-  from = "/test"
-  to = "https://chess.share.zrok.io"
+  from = "/home"
+  to = "/"
+  status = 200
+
+
+[[redirects]]
+  from = "/chat"
+  to = "/"
+  status = 200
+
+
+[[redirects]]
+  from = "/auth"
+  to = "/"
+  status = 200
+
+
+[[redirects]]
+  from = "/settings"
+  to = "/"
   status = 200
 
