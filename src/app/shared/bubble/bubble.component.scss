@@ -13,12 +13,15 @@
 .card-content {
   padding: 10px;
 
-  markdown {
-    ol {
-      padding-left: 20px;
-    }
-    ul {
-      padding-left: 20px;
+  ::ng-deep {
+    markdown {
+      ol {
+        padding-left: 20px;
+      }
+
+      ul {
+        padding-left: 20px;
+      }
     }
   }
 }

@@ -23,7 +23,7 @@ export class StorageService {
     void this.storage.set(key, value);
   }
 
-  get<T>(key: string): Observable<T> {
+  get<T>(key: string): Observable<T | null> {
     return from(this.storage.get(key)).pipe(
       // tap(console.log)
     );

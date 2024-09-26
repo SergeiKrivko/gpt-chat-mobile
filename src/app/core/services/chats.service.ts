@@ -5,6 +5,7 @@ import {Chat} from "../models/chat";
 import {Message} from "../models/message";
 import {MessageAddContent} from "../models/message_add_content";
 import {Updates} from "../models/updates";
+import {StorageService} from "./storage.service";
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +16,16 @@ export class ChatsService {
   private readonly allMessages$$ = new BehaviorSubject(new Map<string, Message[]>());
 
   private readonly socketService = inject(SocketService);
+  private readonly storage = inject(StorageService);
 
-  readonly chats$ = this.chats$$.pipe(shareReplay(1));
-  readonly allMessages$ = this.allMessages$$.pipe(shareReplay(1));
+  readonly chats$ = this.chats$$.pipe(
+    shareReplay(1),
+    tap(chats => this.storage.set('chats', chats))
+  );
+  readonly allMessages$ = this.allMessages$$.pipe(
+    shareReplay(1),
+    tap(messages => this.storage.set('messages', messages))
+  );
 
   getChat(chatId: string) {
     return this.chats$.pipe(
@@ -97,7 +105,22 @@ export class ChatsService {
   );
 
   init() {
+    const pipe1 = this.storage.get<Chat[]>('chats').pipe(
+      tap(chats => {
+        console.log(`Local chats: ${chats}`);
+        if (chats)
+          this.chats$$.next(chats);
+      })
+    );
+    const pipe2 = this.storage.get<Map<string, Message[]>>('messages').pipe(
+      tap(messages => {
+        console.log(`Local messages: ${messages}`);
+        if (messages)
+          this.allMessages$$.next(messages);
+      })
+    );
     return merge(
+      pipe1, pipe2,
       this.newChats$, this.deleteChats$, this.newMessages$, this.messageAddContent$, this.deleteMessages$, this.updates$
     ).pipe(switchMap(() => EMPTY))
   }
@@ -114,11 +137,11 @@ export class ChatsService {
     this.socketService.emit('new_chat');
   }
 
-  deleteChat(id: string){
+  deleteChat(id: string) {
     this.socketService.emit('delete_chat', id);
   }
 
-  deleteMessage(id: string){
+  deleteMessage(id: string) {
     this.socketService.emit('delete_message', id);
   }
 }
