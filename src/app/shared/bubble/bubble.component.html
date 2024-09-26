@@ -1,7 +1,8 @@
 <ion-action-sheet [buttons]="actionSheetButtons" (didDismiss)="onActionSheetDismiss($event)"></ion-action-sheet>
 
 <div class="card" *ngIf="message" [ngClass]="{'right': message.role === 'user'}">
-  <ion-card class="bubble" (contextmenu)="onContextMenu()" (dblclick)="onContextMenu()"
+  <ion-card class="bubble" (dblclick)="onContextMenu()"
+            (touchstart)="onTouchStart()" (touchend)="onTouchEnd()"
             [color]="message.role === 'user' ? 'tertiary' : 'medium'">
     <ion-card-content class="card-content">
       <!--      {{ message.content }}-->

@@ -61,6 +61,7 @@ export class BubbleComponent {
   ];
 
   @Input() message?: Message;
+  private holdTimeout: any;
 
   constructor(private readonly chatsService: ChatsService) {
   }
@@ -102,5 +103,12 @@ export class BubbleComponent {
     });
   }
 
+  onTouchStart() {
+    this.holdTimeout = setTimeout(() => this.onContextMenu(), 500);
+  }
+
+  onTouchEnd() {
+    clearTimeout(this.holdTimeout);
+  }
 
 }

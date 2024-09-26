@@ -1,6 +1,6 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {IonContent, IonToast, ScrollDetail} from "@ionic/angular";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Chat} from "../../core/models/chat";
 import {ChatsService} from "../../core/services/chats.service";
 import {Observable} from "rxjs";
@@ -24,6 +24,8 @@ export class ChatPage implements OnInit {
   public scroll_bottom: number = 200
   public searchbar_hidden: boolean = true
 
+  private readonly router = inject(Router);
+
   constructor(private readonly chatsService: ChatsService,
               private route: ActivatedRoute) {
     const id = this.route.snapshot.paramMap.get('id');
@@ -31,6 +33,8 @@ export class ChatPage implements OnInit {
       this.chatsService.getChat(id).subscribe(chat => {
         if (chat) {
           this.chat = chat
+        } else {
+          void this.router.navigateByUrl('/home');
         }
       });
     }
