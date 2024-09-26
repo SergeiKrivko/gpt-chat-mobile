@@ -85,19 +85,19 @@ export class BubbleComponent {
           this.share(this.message.content)
           break
         case "delete":
-          // this.chatsService.removeMessage(this.message.chat_id, this.message.id)
+          this.chatsService.deleteMessage(this.message.uuid)
           break
       }
   }
 
-  private async share(text: string) {
-    await Share.share({
+  private share(text: string) {
+    Share.share({
       text: text,
     });
   }
 
-  private async writeToClipboard(text: string) {
-    await Clipboard.write({
+  private writeToClipboard(text: string) {
+    Clipboard.write({
       string: text
     });
   }

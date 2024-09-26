@@ -27,7 +27,9 @@ export class ChatsService {
 
   getMessages(chatId: string) {
     return this.allMessages$.pipe(
-      map(messages => messages.get(chatId) ?? [])
+      map(messages => messages.get(chatId)?.sort(
+        (m1, m2) => m1.created_at > m2.created_at ? 1 : -1
+      ) ?? []),
     );
   }
 
@@ -55,6 +57,16 @@ export class ChatsService {
     })
   );
 
+  private readonly deleteMessages$ = this.socketService.fromEvent<string[]>('delete_messages').pipe(
+    tap(messageIds => {
+      const newMap = new Map<string, Message[]>(this.allMessages$$.value);
+      newMap.forEach((messages, chatId) => {
+        newMap.set(chatId, messages.filter(({uuid}) => !messageIds.includes(uuid)))
+      })
+      this.allMessages$$.next(newMap);
+    })
+  );
+
   private readonly messageAddContent$ = this.socketService.fromEvent<MessageAddContent>('message_add_content').pipe(
     tap(content => {
       const newMap = new Map<string, Message[]>(this.allMessages$$.value);
@@ -77,13 +89,16 @@ export class ChatsService {
         chatMessages.push(message);
         newMap.set(message.chat_uuid, chatMessages);
       });
+      newMap.forEach((messages, chatId) => {
+        newMap.set(chatId, messages.filter(({uuid}) => !updates.deleted_messages.includes(uuid)))
+      })
       this.allMessages$$.next(newMap);
     })
   );
 
   init() {
     return merge(
-      this.newChats$, this.deleteChats$, this.newMessages$, this.messageAddContent$, this.updates$
+      this.newChats$, this.deleteChats$, this.newMessages$, this.messageAddContent$, this.deleteMessages$, this.updates$
     ).pipe(switchMap(() => EMPTY))
   }
 
@@ -101,5 +116,9 @@ export class ChatsService {
 
   deleteChat(id: string){
     this.socketService.emit('delete_chat', id);
+  }
+
+  deleteMessage(id: string){
+    this.socketService.emit('delete_message', id);
   }
 }
