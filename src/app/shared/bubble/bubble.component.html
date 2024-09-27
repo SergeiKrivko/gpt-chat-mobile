@@ -13,8 +13,8 @@
     }
 
     <ion-card-content class="card-content">
-      <markdown katex [katexOptions]="optionsKatex">
-        {{ message.content }}
+      <markdown katex>
+        {{ stringEscapeBackslashes(message.content) }}
       </markdown>
     </ion-card-content>
   </ion-card>

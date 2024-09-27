@@ -47,7 +47,6 @@ export class ChatsService {
       map(messages => messages.get(chatId)?.sort(
         (m1, m2) => m1.created_at > m2.created_at ? 1 : -1
       ) ?? []),
-      tap(console.log),
     );
   }
 

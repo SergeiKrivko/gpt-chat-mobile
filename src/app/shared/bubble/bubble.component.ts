@@ -6,6 +6,7 @@ import {Message} from "../../core/models/message";
 import {ChatsService} from "../../core/services/chats.service";
 import {Reply} from "../../core/models/reply";
 import {KatexOptions} from "ngx-markdown";
+import {Haptics, ImpactStyle} from "@capacitor/haptics";
 
 @Component({
   selector: 'app-chat-bubble',
@@ -77,6 +78,7 @@ export class BubbleComponent implements OnInit {
 
   public onContextMenu() {
     void this.action_sheet?.present()
+    void Haptics.impact({ style: ImpactStyle.Medium });
   }
 
   protected getMessage(id: string): Message | null {
@@ -106,19 +108,9 @@ export class BubbleComponent implements OnInit {
       }
   }
 
-  public optionsKatex: KatexOptions = {
-   delimiters: [
-     {left: "$$", right: "$$", display: true},
-     {left: '$', right: '$', display: false}, // I added
-     {left: "\\\(", right: "\\\)", display: false},
-     {left: "\\begin{equation}", right: "\\end{equation}", display: true},
-     {left: "\\begin{align}", right: "\\end{align}", display: true},
-     {left: "\\begin{alignat}", right: "\\end{alignat}", display: true},
-     {left: "\\begin{gather}", right: "\\end{gather}", display: true},
-     {left: "\\begin{CD}", right: "\\end{CD}", display: true},
-     {left: "\\\[", right: "\\\]", display: true},
-   ]
- };
+  stringEscapeBackslashes(s: string): string {
+    return s ? s.replace(/\\/g, '\\\\') : s;
+  }
 
   private share(text: string) {
     void Share.share({
