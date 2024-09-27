@@ -10,6 +10,7 @@ import {ReplyCreate} from "../models/reply_create";
 import {ChatUpdate} from "../models/chat_update";
 import {HttpClient} from "@angular/common/http";
 import {HttpResp} from "../models/socket_resp";
+import {orderBy} from "@angular/fire/firestore";
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +27,13 @@ export class ChatsService {
 
   readonly chats$ = this.chats$$.pipe(
     shareReplay(1),
-    tap(chats => this.storage.set('chats', chats))
+    tap(chats => this.storage.set('chats', chats)),
+    map(chats => chats.sort((c1, c2) => {
+      if (c1.pinned !== c2.pinned) {
+        return c1.pinned ? -1 : 1;
+      }
+      return c1.created_at > c2.created_at ? -1 : 1;
+    }))
   );
   readonly allMessages$ = this.allMessages$$.pipe(
     shareReplay(1),

@@ -5,14 +5,17 @@
       <h1 class="chat-title">{{ chat.name }}</h1>
       <!--      <p class="last-message">{{chatService.chatLastMessageContent(chat.id)}}</p>-->
     </ion-label>
+    @if (chat.pinned) {
+      <ion-icon slot="end" size="small" name="link"/>
+    }
   </ion-item>
   <ion-item-options slot="end" (ionSwipe)="chat.archived ? moveFromArchive() : moveToArchive()">
     @if (chat.pinned) {
-      <ion-item-option color="secondary" [expandable]="false">
+      <ion-item-option color="secondary" [expandable]="false" (click)="unpinChat()">
         <ion-icon slot="icon-only" name="unlink"></ion-icon>
       </ion-item-option>
     } @else {
-      <ion-item-option color="secondary" [expandable]="false">
+      <ion-item-option color="secondary" [expandable]="false" (click)="pinChat()">
         <ion-icon slot="icon-only" name="link"></ion-icon>
       </ion-item-option>
     }

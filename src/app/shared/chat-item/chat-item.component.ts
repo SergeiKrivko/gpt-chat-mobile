@@ -31,6 +31,22 @@ export class ChatItemComponent {
     }
   }
 
+  pinChat() {
+    if (this.chat) {
+      this.chatsService.updateChat(this.chat.uuid, {
+        pinned: true,
+      })
+    }
+  }
+
+  unpinChat() {
+    if (this.chat) {
+      this.chatsService.updateChat(this.chat.uuid, {
+        pinned: false,
+      })
+    }
+  }
+
   moveToArchive() {
     if (this.chat) {
       this.chatsService.updateChat(this.chat.uuid, {
