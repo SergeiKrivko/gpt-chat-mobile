@@ -1,0 +1,23 @@
+.reply-item-container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding: 3px 6px;
+  align-items: center;
+
+  overflow: hidden;
+  position: relative;
+  border-radius: 8px;
+  border: 0 solid black;
+
+  .reply-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .reply-text {
+    height: 16px;
+    flex-grow: 1;
+    overflow: hidden;
+  }
+}

@@ -13,7 +13,7 @@ import {ReplyCreate} from "../../core/models/reply_create";
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
 })
-export class ChatPage implements OnInit {
+export class ChatPage {
   chat?: Chat;
   protected readonly messages$: Observable<Message[]>;
   text: string = "";
@@ -50,17 +50,6 @@ export class ChatPage implements OnInit {
       role: 'cancel',
     },
   ];
-
-  ngOnInit() {
-    // const id = this.route.snapshot.paramMap.get('id');
-    // if (id) {
-    //   this.chatsService.getChat(id).subscribe(chat => {
-    //     if (chat) {
-    //       this.chat = chat
-    //     }
-    //   });
-    // }
-  }
 
   sendMessage() {
     if (this.chat && this.text) {
@@ -105,5 +94,11 @@ export class ChatPage implements OnInit {
 
   public showSearchbar() {
     this.searchbar_hidden = !this.searchbar_hidden
+  }
+
+  getMessage(id: string): Message | null {
+    if (this.chat)
+      return this.chatsService.getMessage(this.chat?.uuid, id) ?? null;
+    return null;
   }
 }

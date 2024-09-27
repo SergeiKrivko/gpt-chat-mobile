@@ -20,6 +20,7 @@ import {SettingsPage} from "./pages/settings/settings-page.component";
 import {provideHttpClient} from "@angular/common/http";
 import {IonicStorageModule} from "@ionic/storage-angular";
 import {ChatSettingsPageComponent} from "./pages/chat-settings-page/chat-settings-page.component";
+import {ReplyItemComponent} from "./shared/reply-item/reply-item.component";
 
 const firebase_config = {
   apiKey: "AIzaSyA8z4fe_VedzuLvLQk9HnQTFnVeJDRdxkc",
@@ -32,11 +33,13 @@ const firebase_config = {
   measurementId: "G-J9JR3WD37F"
 }
 
-const config: SocketIoConfig = { url: 'https://gptchat-api.nachert.art/' };
+const config: SocketIoConfig = {url: 'https://gptchat-api.nachert.art/'};
+
 // const config: SocketIoConfig = {url: 'http://localhost:8000/'};
 
 @NgModule({
-  declarations: [AppComponent, HomePage, AuthPage, ChatPage, BubbleComponent, SettingsPage, ChatSettingsPageComponent],
+  declarations: [AppComponent, HomePage, AuthPage, ChatPage, BubbleComponent, SettingsPage, ChatSettingsPageComponent,
+    ReplyItemComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),

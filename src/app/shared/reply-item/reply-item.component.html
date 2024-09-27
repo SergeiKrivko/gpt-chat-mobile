@@ -1,0 +1,10 @@
+<div class="ion-activatable ripple-parent reply-item-container">
+  <ion-ripple-effect/>
+  <ion-icon name="arrow-undo-outline" class="reply-icon"></ion-icon>
+  <span class="reply-text">{{ text }}</span>
+  @if (removable) {
+    <ion-button size="small" (click)="deleted.emit()">
+      <ion-icon slot="icon-only" name="trash-outline"/>
+    </ion-button>
+  }
+</div>
