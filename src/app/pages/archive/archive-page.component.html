@@ -1,16 +1,11 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="addChat()">
-        <ion-icon slot="icon-only" name="add"/>
-      </ion-button>
-      <ion-button routerLink="/archive">
-        <ion-icon slot="icon-only" name="archive-outline"/>
-      </ion-button>
+      <ion-back-button/>
     </ion-buttons>
-    <ion-title>Чаты</ion-title>
+    <ion-title>Архив</ion-title>
     <ion-buttons slot="end">
-      <ion-button routerLink="/settings">
+      <ion-button [routerLink]="'/settings'">
         <ion-icon slot="icon-only" name="menu"></ion-icon>
       </ion-button>
     </ion-buttons>

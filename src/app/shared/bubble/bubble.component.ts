@@ -5,7 +5,6 @@ import {Clipboard} from '@capacitor/clipboard';
 import {Message} from "../../core/models/message";
 import {ChatsService} from "../../core/services/chats.service";
 import {Reply} from "../../core/models/reply";
-import {KatexOptions} from "ngx-markdown";
 import {Haptics, ImpactStyle} from "@capacitor/haptics";
 
 @Component({
@@ -19,35 +18,35 @@ export class BubbleComponent implements OnInit {
 
   public actionSheetButtons = [
     {
-      text: 'Reply',
+      text: 'Ответить',
       icon: 'arrow-undo-outline',
       data: {
         action: 'reply',
       },
     },
     {
-      text: 'Copy as text',
+      text: 'Копировать как текст',
       icon: 'copy-outline',
       data: {
         action: 'copy',
       },
     },
     {
-      text: 'Copy as Markdown',
+      text: 'Копировать как Markdown',
       icon: 'logo-markdown',
       data: {
         action: 'copy-md',
       },
     },
     {
-      text: 'Share',
+      text: 'Поделиться',
       icon: 'share-outline',
       data: {
         action: 'share',
       },
     },
     {
-      text: 'Delete',
+      text: 'Удалить',
       icon: 'trash-outline',
       role: 'destructive',
       data: {
@@ -55,7 +54,7 @@ export class BubbleComponent implements OnInit {
       },
     },
     {
-      text: 'Cancel',
+      text: 'Отмена',
       role: 'cancel',
       data: {
         action: 'cancel',

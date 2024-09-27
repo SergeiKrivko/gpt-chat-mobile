@@ -5,6 +5,7 @@ import {AuthPage} from "./pages/auth/auth.page";
 import {ChatPage} from "./pages/chat/chat.page";
 import {SettingsPage} from "./pages/settings/settings-page.component";
 import {ChatSettingsPageComponent} from "./pages/chat-settings-page/chat-settings-page.component";
+import {ArchivePageComponent} from "./pages/archive/archive-page.component";
 
 const routes: Routes = [
   {
@@ -15,6 +16,10 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
+  },
+  {
+    path: 'archive',
+    component: ArchivePageComponent,
   },
   {
     path: 'auth',

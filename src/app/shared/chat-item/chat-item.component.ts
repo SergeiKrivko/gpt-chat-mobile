@@ -30,4 +30,20 @@ export class ChatItemComponent {
       this.chatsService.deleteChat(this.chat?.uuid)
     }
   }
+
+  moveToArchive() {
+    if (this.chat) {
+      this.chatsService.updateChat(this.chat.uuid, {
+        archived: true,
+      })
+    }
+  }
+
+  moveFromArchive() {
+    if (this.chat) {
+      this.chatsService.updateChat(this.chat.uuid, {
+        archived: false,
+      })
+    }
+  }
 }
