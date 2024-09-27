@@ -3,7 +3,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Chat} from "../../core/models/chat";
 import {ChatsService} from "../../core/services/chats.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {min} from "rxjs";
 
 @Component({
   selector: 'app-chat-settings-page',
@@ -17,6 +16,7 @@ export class ChatSettingsPageComponent {
   private readonly chatsService = inject(ChatsService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  protected readonly models$ = this.chatsService.models$;
 
   protected readonly formGroup = new FormGroup({
     name: new FormControl(''),
@@ -42,5 +42,21 @@ export class ChatSettingsPageComponent {
         }
       });
     }
+  }
+
+  save() {
+    if (!this.chat)
+      return;
+    this.chatsService.updateChat(this.chat.uuid, {
+      name: this.formGroup.value.name ?? undefined,
+      model: this.formGroup.value.model ?? undefined,
+      context_size: this.formGroup.value.context ?? undefined,
+      temperature: this.formGroup.value.temperature ?? undefined,
+    });
+    this.close();
+  }
+
+  close() {
+    void this.router.navigateByUrl('/chat/' + this.chat?.uuid);
   }
 }

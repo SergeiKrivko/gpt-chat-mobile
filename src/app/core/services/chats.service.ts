@@ -7,6 +7,9 @@ import {MessageAddContent} from "../models/message_add_content";
 import {Updates} from "../models/updates";
 import {StorageService} from "./storage.service";
 import {ReplyCreate} from "../models/reply_create";
+import {ChatUpdate} from "../models/chat_update";
+import {HttpClient} from "@angular/common/http";
+import {HttpResp} from "../models/socket_resp";
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +18,11 @@ export class ChatsService {
 
   private readonly chats$$ = new BehaviorSubject<Chat[]>([]);
   private readonly allMessages$$ = new BehaviorSubject(new Map<string, Message[]>());
+  private readonly models$$ = new BehaviorSubject<string[]>([]);
 
   private readonly socketService = inject(SocketService);
   private readonly storage = inject(StorageService);
+  private readonly http = inject(HttpClient);
 
   readonly chats$ = this.chats$$.pipe(
     shareReplay(1),
@@ -26,6 +31,9 @@ export class ChatsService {
   readonly allMessages$ = this.allMessages$$.pipe(
     shareReplay(1),
     tap(messages => this.storage.set('messages', messages))
+  );
+  readonly models$ = this.models$$.pipe(
+    shareReplay(1),
   );
 
   getChat(chatId: string) {
@@ -55,6 +63,12 @@ export class ChatsService {
   private readonly deleteChats$ = this.socketService.fromEvent<string[]>('delete_chats').pipe(
     tap(chatIds => {
       this.chats$$.next(this.chats$$.value.filter(({uuid}) => !chatIds.includes(uuid)));
+    })
+  );
+
+  private readonly updateChat$ = this.socketService.fromEvent<Chat>('update_chat').pipe(
+    tap(chat => {
+      this.chats$$.next([...this.chats$$.value.filter(({uuid}) => chat.uuid !== uuid), chat]);
     })
   );
 
@@ -124,9 +138,16 @@ export class ChatsService {
           this.allMessages$$.next(messages);
       })
     );
+    const pipe3 = this.http.get<HttpResp<string[]>>('https://gptchat-api.nachert.art/api/v1/gpt/models').pipe(
+      map(resp => {
+        this.models$$.next(resp.data);
+      })
+    );
     return merge(
-      pipe1, pipe2,
-      this.newChats$, this.deleteChats$, this.newMessages$, this.messageAddContent$, this.deleteMessages$, this.updates$
+      pipe1, pipe2, pipe3,
+      this.newChats$, this.deleteChats$, this.updateChat$,
+      this.newMessages$, this.messageAddContent$, this.deleteMessages$,
+      this.updates$
     ).pipe(switchMap(() => EMPTY))
   }
 
@@ -145,6 +166,10 @@ export class ChatsService {
 
   deleteChat(id: string) {
     this.socketService.emit('delete_chat', id);
+  }
+
+  updateChat(id: string, chat: ChatUpdate) {
+    this.socketService.emit('update_chat', id, chat);
   }
 
   deleteMessage(id: string) {
