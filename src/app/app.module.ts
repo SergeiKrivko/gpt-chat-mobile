@@ -14,11 +14,12 @@ import {AuthPage} from "./pages/auth/auth.page";
 import {ChatPage} from "./pages/chat/chat.page";
 import {ChatItemComponent} from "./shared/chat-item/chat-item.component";
 import {BubbleComponent} from "./shared/bubble/bubble.component";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MarkdownComponent, provideMarkdown} from "ngx-markdown";
 import {SettingsPage} from "./pages/settings/settings-page.component";
 import {provideHttpClient} from "@angular/common/http";
 import {IonicStorageModule} from "@ionic/storage-angular";
+import {ChatSettingsPageComponent} from "./pages/chat-settings-page/chat-settings-page.component";
 
 const firebase_config = {
   apiKey: "AIzaSyA8z4fe_VedzuLvLQk9HnQTFnVeJDRdxkc",
@@ -35,7 +36,7 @@ const config: SocketIoConfig = { url: 'https://gptchat-api.nachert.art/' };
 // const config: SocketIoConfig = {url: 'http://localhost:8000/'};
 
 @NgModule({
-  declarations: [AppComponent, HomePage, AuthPage, ChatPage, BubbleComponent, SettingsPage],
+  declarations: [AppComponent, HomePage, AuthPage, ChatPage, BubbleComponent, SettingsPage, ChatSettingsPageComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -44,7 +45,8 @@ const config: SocketIoConfig = { url: 'https://gptchat-api.nachert.art/' };
     ChatItemComponent,
     FormsModule,
     MarkdownComponent,
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot(),
+    ReactiveFormsModule
   ],
   providers: [
     {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},

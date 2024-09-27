@@ -66,7 +66,7 @@ export class ChatPage implements OnInit {
     if (this.chat && this.text) {
       this.chatsService.newMessage(this.chat.uuid, this.text, this.reply)
       this.text = "";
-    };
+    }
     this.reply = [];
   }
 

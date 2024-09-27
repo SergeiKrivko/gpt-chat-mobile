@@ -1,0 +1,31 @@
+<ion-header [translucent]="true" id="header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ chat?.name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [formGroup]="formGroup">
+  <ion-item>
+    <ion-input formControlName="name" label="Название:"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-select label="Модель:" placeholder="Default">
+      <ion-select-option value="apple">Apple</ion-select-option>
+      <ion-select-option value="banana">Banana</ion-select-option>
+      <ion-select-option value="orange">Orange</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-input type="number" label="Размер контекста:" formControlName="context"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input type="number" label="Temperature:" formControlName="temperature"></ion-input>
+  </ion-item>
+  <div class="buttons-container">
+    <ion-button>Сохранить</ion-button>
+    <ion-button color="danger" fill="outline">Отмена</ion-button>
+  </div>
+</ion-content>

@@ -4,4 +4,6 @@ export interface Chat {
   deleted_at: string;
   name: string;
   model: string;
+  context_size: number,
+  temperature: number;
 }
