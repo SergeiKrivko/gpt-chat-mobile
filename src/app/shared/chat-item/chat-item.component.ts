@@ -62,4 +62,23 @@ export class ChatItemComponent {
       })
     }
   }
+
+  generateCircleText() {
+    if (!this.chat)
+      return "";
+    let lst: string[] = [];
+    this.chat.name.split(' ').forEach(word => {
+      if (word) {
+        lst.push(word[0]);
+        for (let i = 1; i < word.length; i++) {
+          if (word[i] == word[i].toUpperCase())
+            lst.push(word[i]);
+        }
+      }
+    });
+    if (lst.length > 2) {
+      lst = lst.slice(0, 2);
+    }
+    return lst.join('');
+  }
 }

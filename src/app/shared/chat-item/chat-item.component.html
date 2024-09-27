@@ -1,14 +1,21 @@
 <ion-item-sliding *ngIf="chat">
-  <ion-item [routerLink]="chatLink()">
-    <ion-icon slot="start" name="chatbox-outline" size="large"></ion-icon>
+  <ion-item [routerLink]="chatLink()" [detail]="false">
+    <ion-avatar>
+      <div class="chat-circle">
+        <span>{{ generateCircleText() }}</span>
+      </div>
+    </ion-avatar>
+<!--    <ion-icon slot="start" name="chatbox-outline" size="large"></ion-icon>-->
     <ion-label>
       <h1 class="chat-title">{{ chat.name }}</h1>
+      <p>Last message</p>
       <!--      <p class="last-message">{{chatService.chatLastMessageContent(chat.id)}}</p>-->
     </ion-label>
     @if (chat.pinned) {
       <ion-icon slot="end" size="small" name="link"/>
     }
   </ion-item>
+
   <ion-item-options slot="end" (ionSwipe)="chat.archived ? moveFromArchive() : moveToArchive()">
     @if (chat.pinned) {
       <ion-item-option color="secondary" [expandable]="false" (click)="unpinChat()">
