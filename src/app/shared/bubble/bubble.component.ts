@@ -5,6 +5,7 @@ import {Clipboard} from '@capacitor/clipboard';
 import {Message} from "../../core/models/message";
 import {ChatsService} from "../../core/services/chats.service";
 import {Reply} from "../../core/models/reply";
+import {KatexOptions} from "ngx-markdown";
 
 @Component({
   selector: 'app-chat-bubble',
@@ -104,6 +105,22 @@ export class BubbleComponent implements OnInit {
           break
       }
   }
+
+  public optionsKatex: KatexOptions = {
+   delimiters: [
+     {left: "$$", right: "$$", display: true},
+     {left: '$', right: '$', display: false}, // I added
+     {left: "\\(", right: "\\)", display: false},
+     {left: "\(", right: "\)", display: false}, // I added
+     {left: "\\begin{equation}", right: "\\end{equation}", display: true},
+     {left: "\\begin{align}", right: "\\end{align}", display: true},
+     {left: "\\begin{alignat}", right: "\\end{alignat}", display: true},
+     {left: "\\begin{gather}", right: "\\end{gather}", display: true},
+     {left: "\\begin{CD}", right: "\\end{CD}", display: true},
+     {left: "\\[", right: "\\]", display: true},
+     {left: "\[", right: "\]", display: true}, // I added
+   ]
+ };
 
   private share(text: string) {
     void Share.share({
