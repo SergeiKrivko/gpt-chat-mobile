@@ -1,11 +1,10 @@
-import {Component, inject, OnInit, ViewChild} from '@angular/core';
+import {Component, inject, ViewChild} from '@angular/core';
 import {IonContent, IonToast, ScrollDetail} from "@ionic/angular";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Chat} from "../../core/models/chat";
 import {ChatsService} from "../../core/services/chats.service";
 import {Observable} from "rxjs";
 import {Message} from "../../core/models/message";
-import {Reply} from "../../core/models/reply";
 import {ReplyCreate} from "../../core/models/reply_create";
 
 @Component({
@@ -16,6 +15,7 @@ import {ReplyCreate} from "../../core/models/reply_create";
 export class ChatPage {
   chat?: Chat;
   protected readonly messages$: Observable<Message[]>;
+  protected readonly gptWriting$: Observable<boolean>;
   text: string = "";
   reply: ReplyCreate[] = [];
 
@@ -42,6 +42,7 @@ export class ChatPage {
       });
     }
     this.messages$ = this.chatsService.getMessages(id ?? "");
+    this.gptWriting$ = this.chatsService.getGptWriting(id ?? "");
   }
 
   public toastButtons = [

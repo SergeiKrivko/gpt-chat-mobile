@@ -8,4 +8,6 @@ export interface Message {
   role: string;
   content: string;
   reply: Reply[];
+  model: string;
+  temperature: number;
 }

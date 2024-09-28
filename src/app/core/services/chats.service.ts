@@ -10,7 +10,6 @@ import {ReplyCreate} from "../models/reply_create";
 import {ChatUpdate} from "../models/chat_update";
 import {HttpClient} from "@angular/common/http";
 import {HttpResp} from "../models/socket_resp";
-import {orderBy} from "@angular/fire/firestore";
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +19,7 @@ export class ChatsService {
   private readonly chats$$ = new BehaviorSubject<Chat[]>([]);
   private readonly allMessages$$ = new BehaviorSubject(new Map<string, Message[]>());
   private readonly models$$ = new BehaviorSubject<string[]>([]);
+  private readonly gptWriting$$ = new BehaviorSubject(new Map<string, boolean>());
 
   private readonly socketService = inject(SocketService);
   private readonly storage = inject(StorageService);
@@ -39,6 +39,9 @@ export class ChatsService {
     shareReplay(1),
     tap(messages => this.storage.set('messages', messages))
   );
+  readonly gptWriting$ = this.gptWriting$$.pipe(
+    shareReplay(1),
+  );
   readonly models$ = this.models$$.pipe(
     shareReplay(1),
   );
@@ -57,7 +60,13 @@ export class ChatsService {
     );
   }
 
-  getMessage(chatId: string, id: string){
+  getGptWriting(chatId: string) {
+    return this.gptWriting$$.pipe(
+      map(messages => messages.get(chatId) ?? false),
+    );
+  }
+
+  getMessage(chatId: string, id: string) {
     return this.allMessages$$.value.get(chatId)?.filter(m => m.uuid == id)[0];
   }
 
@@ -91,6 +100,14 @@ export class ChatsService {
     })
   );
 
+  private readonly messageFinished$ = this.socketService.fromEvent<Message>('message_finish').pipe(
+    tap(message => {
+      const newMap = new Map<string, boolean>(this.gptWriting$$.value);
+      newMap.set(message.chat_uuid, false);
+      this.gptWriting$$.next(newMap);
+    })
+  );
+
   private readonly deleteMessages$ = this.socketService.fromEvent<string[]>('delete_messages').pipe(
     tap(messageIds => {
       const newMap = new Map<string, Message[]>(this.allMessages$$.value);
@@ -104,12 +121,26 @@ export class ChatsService {
   private readonly messageAddContent$ = this.socketService.fromEvent<MessageAddContent>('message_add_content').pipe(
     tap(content => {
       const newMap = new Map<string, Message[]>(this.allMessages$$.value);
-      const message = newMap.get(content.chat)?.find(message => message.uuid === content.uuid);
-      if (message) {
-        message.content += content.content;
-        this.allMessages$$.next(newMap);
-      } else {
-        console.warn(`Adding to no exist message ${content.uuid} (chat ${content.chat})`);
+      const messages = newMap.get(content.chat);
+      if (messages) {
+        const index = messages.findIndex(m => m.uuid == content.uuid);
+        if (index != -1) {
+          const message = messages[index];
+          messages[index] = {
+            uuid: message.uuid,
+            chat_uuid: message.chat_uuid,
+            created_at: message.created_at,
+            deleted_at: message.deleted_at,
+            role: message.deleted_at,
+            content: message.content + content.content,
+            reply: message.reply,
+            model: message.model,
+            temperature: message.temperature,
+          };
+          this.allMessages$$.next(newMap);
+        } else {
+          console.warn(`Adding to no exist message ${content.uuid} (chat ${content.chat})`);
+        }
       }
     })
   );
@@ -153,7 +184,7 @@ export class ChatsService {
     return merge(
       pipe1, pipe2, pipe3,
       this.newChats$, this.deleteChats$, this.updateChat$,
-      this.newMessages$, this.messageAddContent$, this.deleteMessages$,
+      this.newMessages$, this.messageAddContent$, this.deleteMessages$, this.messageFinished$,
       this.updates$
     ).pipe(switchMap(() => EMPTY))
   }
@@ -165,6 +196,9 @@ export class ChatsService {
       content: content,
       reply: reply,
     }, true);
+    const newMap = new Map<string, boolean>(this.gptWriting$$.value);
+    newMap.set(chatId, true);
+    this.gptWriting$$.next(newMap);
   }
 
   newChat() {

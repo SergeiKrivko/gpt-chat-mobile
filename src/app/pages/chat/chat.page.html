@@ -33,6 +33,12 @@
     @for (message of messages$ | async; track message) {
       <app-chat-bubble [message]="message" (replyClicked)="onReplyClicked(message.uuid)"></app-chat-bubble>
     }
+    @if (gptWriting$ | async) {
+      <div class="gpt-writing-container">
+        <span>GPT печатает</span>
+        <ion-spinner name="dots"/>
+      </div>
+    }
   </div>
   <ion-fab-button [hidden]="scroll_bottom <= 100" class="button-down" slot="fixed" size="small"
                   (click)="scrollToBottom()">
@@ -53,7 +59,8 @@
   @if (reply.length) {
     <ion-toolbar>
       @for (reply of this.reply; track reply) {
-        <app-reply-item [text]="getMessage(reply.reply_to)?.content ?? ''" (deleted)="removeReply(reply.reply_to)" [removable]="true"/>
+        <app-reply-item [text]="getMessage(reply.reply_to)?.content ?? ''" (deleted)="removeReply(reply.reply_to)"
+                        [removable]="true"/>
       }
     </ion-toolbar>
   }
