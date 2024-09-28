@@ -3,7 +3,7 @@ import {IonContent, IonToast, ScrollDetail} from "@ionic/angular";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Chat} from "../../core/models/chat";
 import {ChatsService} from "../../core/services/chats.service";
-import {Observable} from "rxjs";
+import {Observable, tap} from "rxjs";
 import {Message} from "../../core/models/message";
 import {ReplyCreate} from "../../core/models/reply_create";
 
@@ -43,6 +43,9 @@ export class ChatPage {
     }
     this.messages$ = this.chatsService.getMessages(id ?? "");
     this.gptWriting$ = this.chatsService.getGptWriting(id ?? "");
+    this.chatsService.gptError$.pipe(
+      tap(this.showToast)
+    ).subscribe();
   }
 
   public toastButtons = [

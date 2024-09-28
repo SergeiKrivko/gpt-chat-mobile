@@ -145,6 +145,10 @@ export class ChatsService {
     })
   );
 
+  readonly gptError$ = this.socketService.fromEvent<string>('gpt_error').pipe(
+    tap(err => console.error(`GPT error: ${err}`)),
+  )
+
   private readonly updates$ = this.socketService.fromEvent<Updates>('updates_response').pipe(
     tap(updates => {
       this.chats$$.next([...this.chats$$.value.filter(({uuid}) => !updates.deleted_chats.includes(uuid)), ...updates.new_chats]);
