@@ -22,6 +22,7 @@ import {IonicStorageModule} from "@ionic/storage-angular";
 import {ChatSettingsPageComponent} from "./pages/chat-settings-page/chat-settings-page.component";
 import {ReplyItemComponent} from "./shared/reply-item/reply-item.component";
 import {ArchivePageComponent} from "./pages/archive/archive-page.component";
+import {NgOptimizedImage} from "@angular/common";
 
 const firebase_config = {
   apiKey: "AIzaSyA8z4fe_VedzuLvLQk9HnQTFnVeJDRdxkc",
@@ -41,17 +42,18 @@ const config: SocketIoConfig = {url: 'https://gptchat-api.nachert.art/'};
 @NgModule({
   declarations: [AppComponent, HomePage, AuthPage, ChatPage, BubbleComponent, SettingsPage, ChatSettingsPageComponent,
     ReplyItemComponent, ArchivePageComponent],
-  imports: [
-    BrowserModule,
-    IonicModule.forRoot(),
-    AppRoutingModule,
-    SocketIoModule.forRoot(config),
-    ChatItemComponent,
-    FormsModule,
-    MarkdownComponent,
-    IonicStorageModule.forRoot(),
-    ReactiveFormsModule
-  ],
+    imports: [
+        BrowserModule,
+        IonicModule.forRoot(),
+        AppRoutingModule,
+        SocketIoModule.forRoot(config),
+        ChatItemComponent,
+        FormsModule,
+        MarkdownComponent,
+        IonicStorageModule.forRoot(),
+        ReactiveFormsModule,
+        NgOptimizedImage
+    ],
   providers: [
     {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
     provideFirebaseApp(() => initializeApp(firebase_config)),

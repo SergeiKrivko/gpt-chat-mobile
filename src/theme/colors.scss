@@ -1,0 +1,19 @@
+:root {
+  --chat-color-0: #C2190C;
+  --chat-color-1: #9E6915;
+  --chat-color-2: #176494;
+  --chat-color-3: #2E7539;
+  --chat-color-4: #5D3075;
+  --chat-color-5: #737373;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --chat-color-0: #C2190C;
+    --chat-color-1: #9E6915;
+    --chat-color-2: #176494;
+    --chat-color-3: #2E7539;
+    --chat-color-4: #5D3075;
+    --chat-color-5: #737373;
+  }
+}

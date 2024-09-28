@@ -29,6 +29,7 @@
 <ion-content
   [scrollEvents]="true"
   (ionScroll)="onScroll($event)">
+<!--  <img src="assets/pattern-1.svg" alt="">-->
   <div class="bubbles-list">
     @for (message of messages$ | async; track message) {
       <app-chat-bubble [message]="message" (replyClicked)="onReplyClicked(message.uuid)"></app-chat-bubble>

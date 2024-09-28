@@ -8,4 +8,5 @@ export interface Chat {
   temperature: number;
   archived: boolean;
   pinned: boolean;
+  color: number;
 }

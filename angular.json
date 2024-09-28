@@ -33,6 +33,7 @@
             ],
             "styles": [
               "src/theme/variables.scss",
+              "src/theme/colors.scss",
               "src/global.scss",
               "node_modules/prismjs/themes/prism-okaidia.css",
               "node_modules/katex/dist/katex.min.css"

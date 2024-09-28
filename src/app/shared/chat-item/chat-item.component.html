@@ -1,7 +1,7 @@
 <ion-item-sliding *ngIf="chat">
   <ion-item [routerLink]="chatLink()" [detail]="false">
     <ion-avatar>
-      <div class="chat-circle">
+      <div [class]="'chat-circle chat-color-' + chat.color">
         <span>{{ generateCircleText() }}</span>
       </div>
     </ion-avatar>
