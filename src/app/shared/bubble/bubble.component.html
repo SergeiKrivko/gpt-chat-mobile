@@ -1,9 +1,11 @@
 <ion-action-sheet [buttons]="actionSheetButtons" (didDismiss)="onActionSheetDismiss($event)"></ion-action-sheet>
 
 <div class="card" *ngIf="message" [ngClass]="{'right': message.role === 'user'}">
-  <ion-card class="bubble" (dblclick)="onContextMenu()"
-            (touchstart)="onTouchStart()" (touchend)="onTouchEnd()"
-            [color]="message.role === 'user' ? 'tertiary' : 'medium'">
+  <ion-card class="bubble"
+            [ngClass]="{'gpt-bubble': message.role === 'assistant', 'user-bubble': message.role === 'user'}"
+            (dblclick)="onContextMenu()"
+            (touchstart)="onTouchStart()"
+            (touchend)="onTouchEnd()">
     @if (reply.length) {
       <div class="reply-container">
         @for (reply of reply; track reply) {

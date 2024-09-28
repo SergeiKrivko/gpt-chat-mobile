@@ -33,4 +33,13 @@
 .bubble {
   border-radius: 10px 10px 10px 0;
   max-width: 80%;
+  color: var(--bubble-text-color);
+}
+
+.gpt-bubble {
+  background: var(--gpt-bubble-color);
+}
+
+.user-bubble {
+  background: var(--user-bubble-color);
 }
