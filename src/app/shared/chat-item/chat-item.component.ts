@@ -27,7 +27,7 @@ export class ChatItemComponent implements OnInit {
   ngOnInit() {
     if (this.chat) {
       this.chatsService.getMessages(this.chat.uuid).pipe(
-        map(messages => messages.length ? messages[0] : null),
+        map(messages => messages.length ? messages[messages.length - 1] : null),
         tap(m => this.lastMessage = m)
       ).subscribe()
     }
