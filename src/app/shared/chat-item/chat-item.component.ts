@@ -45,7 +45,7 @@ export class ChatItemComponent implements OnInit {
 
   pinChat() {
     if (this.chat) {
-      this.chatsService.updateChat(this.chat.uuid, {
+      this.chatsService.updateChatImmediately(this.chat.uuid, {
         pinned: true,
       })
     }
@@ -53,7 +53,7 @@ export class ChatItemComponent implements OnInit {
 
   unpinChat() {
     if (this.chat) {
-      this.chatsService.updateChat(this.chat.uuid, {
+      this.chatsService.updateChatImmediately(this.chat.uuid, {
         pinned: false,
       })
     }
@@ -61,7 +61,7 @@ export class ChatItemComponent implements OnInit {
 
   moveToArchive() {
     if (this.chat) {
-      this.chatsService.updateChat(this.chat.uuid, {
+      this.chatsService.updateChatImmediately(this.chat.uuid, {
         archived: true,
       })
     }
@@ -69,7 +69,7 @@ export class ChatItemComponent implements OnInit {
 
   moveFromArchive() {
     if (this.chat) {
-      this.chatsService.updateChat(this.chat.uuid, {
+      this.chatsService.updateChatImmediately(this.chat.uuid, {
         archived: false,
       })
     }

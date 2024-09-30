@@ -206,6 +206,28 @@ export class ChatsService {
     this.socketService.emit('update_chat', id, chat);
   }
 
+  updateChatImmediately(id: string, chat: ChatUpdate) {
+    this.socketService.emit('update_chat', id, chat);
+    const newMap = new Map(this.chats$$.value);
+    let oldChat = newMap.get(id);
+    if (oldChat) {
+      let newChat: Chat = {
+        uuid: id,
+        created_at: oldChat.created_at,
+        deleted_at: oldChat.deleted_at,
+        name: chat.name ?? oldChat.name,
+        model: chat.model ?? oldChat.model,
+        context_size: chat.context_size ?? oldChat.context_size,
+        temperature: chat.temperature ?? oldChat.temperature,
+        pinned: chat.pinned ?? oldChat.pinned,
+        archived: chat.archived ?? oldChat.archived,
+        color: oldChat.color,
+      }
+      newMap.set(id, newChat);
+    }
+    this.chats$$.next(newMap);
+  }
+
   deleteMessage(id: string) {
     this.socketService.emit('delete_message', id);
   }
