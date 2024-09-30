@@ -1,4 +1,5 @@
-<ion-action-sheet [buttons]="actionSheetButtons" (didDismiss)="onActionSheetDismiss($event)"></ion-action-sheet>
+<ion-action-sheet #actionSheet [buttons]="actionSheetButtons" (didDismiss)="onActionSheetDismiss($event)"/>
+<ion-action-sheet #translateSheet [buttons]="translateActions()" (didDismiss)="onTranslateSheetDismiss($event)"/>
 
 <div class="card" *ngIf="message" [ngClass]="{'right': message.role === 'user'}">
   <ion-card class="bubble"
@@ -12,6 +13,10 @@
           <app-reply-item [text]="getMessage(reply.reply_to)?.content ?? ''"></app-reply-item>
         }
       </div>
+    }
+
+    @if (currentLang !== originalLang) {
+      <span class="translated-label">Переведено с {{ originalLang }}</span>
     }
 
     <ion-card-content class="card-content">

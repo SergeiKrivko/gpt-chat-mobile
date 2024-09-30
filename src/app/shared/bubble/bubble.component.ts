@@ -8,6 +8,7 @@ import {Reply} from "../../core/models/reply";
 import {Haptics, ImpactStyle} from "@capacitor/haptics";
 import {map, Observable, tap} from "rxjs";
 import {MarkdownComponent} from "ngx-markdown";
+import {TranslateService} from "../../core/services/translate.service";
 
 @Component({
   selector: 'app-chat-bubble',
@@ -16,9 +17,12 @@ import {MarkdownComponent} from "ngx-markdown";
 })
 export class BubbleComponent implements OnInit {
 
-  @ViewChild(IonActionSheet) action_sheet: IonActionSheet | undefined;
+  @ViewChild('actionSheet') actionSheet: IonActionSheet | undefined;
+  @ViewChild('translateSheet') translateSheet: IonActionSheet | undefined;
+  protected currentLang: string | undefined;
+  protected originalLang: string | undefined;
 
-  public actionSheetButtons = [
+  readonly actionSheetButtons = [
     {
       text: 'Ответить',
       icon: 'arrow-undo-outline',
@@ -48,6 +52,13 @@ export class BubbleComponent implements OnInit {
       },
     },
     {
+      text: 'Перевести',
+      icon: 'language-outline',
+      data: {
+        action: 'translate',
+      },
+    },
+    {
       text: 'Удалить',
       icon: 'trash-outline',
       role: 'destructive',
@@ -73,6 +84,7 @@ export class BubbleComponent implements OnInit {
 
   protected reply: Reply[] = [];
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translateService = inject(TranslateService);
 
   constructor(private readonly chatsService: ChatsService) {
   }
@@ -92,7 +104,7 @@ export class BubbleComponent implements OnInit {
   }
 
   public onContextMenu() {
-    void this.action_sheet?.present()
+    void this.actionSheet?.present()
     void Haptics.impact({style: ImpactStyle.Medium});
   }
 
@@ -115,9 +127,30 @@ export class BubbleComponent implements OnInit {
         case "share":
           this.share(this.message.content)
           break
+        case "translate":
+          this.translateSheet?.present();
+          break
         case "delete":
           this.chatsService.deleteMessage(this.message.uuid)
           break
+      }
+  }
+
+  public onTranslateSheetDismiss(event: any) {
+    if (this.message && event.detail.data)
+      if (event.detail.data.action === '') {
+        this.markdownComponent?.render(this.message?.content ?? "")
+        this.currentLang = this.originalLang;
+        this.cdr.detectChanges();
+      }
+      else if (event.detail.data.action) {
+        this.translateService.translate(this.message.content, event.detail.data.action).subscribe(resp => {
+          this.markdownComponent?.render(resp.res);
+          this.currentLang = resp.dst;
+          if (!this.originalLang)
+            this.originalLang = resp.src;
+          this.cdr.detectChanges();
+        })
       }
   }
 
@@ -145,5 +178,33 @@ export class BubbleComponent implements OnInit {
     clearTimeout(this.holdTimeout);
   }
 
-  protected readonly ChatsService = ChatsService;
+  translateActions() {
+    const res = [];
+    if (this.currentLang !== this.originalLang) {
+      res.push({
+        text: 'Показать оригинал',
+        data: {
+          action: '',
+        },
+        role: 'cancel'
+      });
+    }
+    [
+      {code: 'rus', name: 'Русский'},
+      {code: 'eng', name: 'Английский'},
+      {code: 'fra', name: 'Французский'},
+      {code: 'ger', name: 'Немецкий'},
+      {code: 'ita', name: 'Итальянский'},
+      {code: 'esp', name: 'Испанский'},
+    ].forEach(el => {
+      if (this.currentLang !== el.code)
+        res.push({
+          text: el.name,
+          data: {
+            action: el.code,
+          }
+        });
+    });
+    return res;
+  }
 }
