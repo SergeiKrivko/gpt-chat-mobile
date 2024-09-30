@@ -5,11 +5,9 @@
         <span>{{ generateCircleText() }}</span>
       </div>
     </ion-avatar>
-<!--    <ion-icon slot="start" name="chatbox-outline" size="large"></ion-icon>-->
     <ion-label>
       <h1 class="chat-title">{{ chat.name }}</h1>
-      <p>Last message</p>
-      <!--      <p class="last-message">{{chatService.chatLastMessageContent(chat.id)}}</p>-->
+      <p class="last-message">{{ lastMessage?.content }}</p>
     </ion-label>
     @if (chat.pinned) {
       <ion-icon slot="end" size="small" name="link"/>
