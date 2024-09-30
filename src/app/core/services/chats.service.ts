@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {SocketService} from "./socket.service";
-import {BehaviorSubject, EMPTY, map, merge, shareReplay, switchMap, tap} from "rxjs";
+import {BehaviorSubject, EMPTY, map, merge, Observable, shareReplay, switchMap, tap} from "rxjs";
 import {Chat} from "../models/chat";
 import {Message} from "../models/message";
 import {MessageAddContent} from "../models/message_add_content";
@@ -16,8 +16,8 @@ import {HttpResp} from "../models/socket_resp";
 })
 export class ChatsService {
 
-  private readonly chats$$ = new BehaviorSubject<Chat[]>([]);
-  private readonly allMessages$$ = new BehaviorSubject(new Map<string, Message[]>());
+  private readonly chats$$ = new BehaviorSubject<Map<string, Chat>>(new Map());
+  private readonly allMessages$$ = new BehaviorSubject(new Map<string, Message>());
   private readonly models$$ = new BehaviorSubject<string[]>([]);
   private readonly gptWriting$$ = new BehaviorSubject(new Map<string, boolean>());
 
@@ -28,7 +28,7 @@ export class ChatsService {
   readonly chats$ = this.chats$$.pipe(
     shareReplay(1),
     tap(chats => this.storage.set('chats', chats)),
-    map(chats => chats.sort((c1, c2) => {
+    map(chats => [...chats.values()].sort((c1, c2) => {
       if (c1.pinned !== c2.pinned) {
         return c1.pinned ? -1 : 1;
       }
@@ -54,7 +54,7 @@ export class ChatsService {
 
   getMessages(chatId: string) {
     return this.allMessages$.pipe(
-      map(messages => messages.get(chatId)?.sort(
+      map(messages => [...messages.values()].filter(m => m.chat_uuid === chatId).sort(
         (m1, m2) => m1.created_at > m2.created_at ? 1 : -1
       ) ?? []),
     );
@@ -66,35 +66,39 @@ export class ChatsService {
     );
   }
 
-  getMessage(chatId: string, id: string) {
-    return this.allMessages$$.value.get(chatId)?.filter(m => m.uuid == id)[0];
+  getMessage(id: string): Message | undefined {
+    return this.allMessages$$.value.get(id);
   }
 
   private readonly newChats$ = this.socketService.fromEvent<Chat[]>('new_chats').pipe(
     tap(chats => {
-      this.chats$$.next([...this.chats$$.value, ...chats]);
+      const newMap = new Map(this.chats$$.value);
+      chats.forEach(chat => newMap.set(chat.uuid, chat));
+      this.chats$$.next(newMap);
     })
   );
 
   private readonly deleteChats$ = this.socketService.fromEvent<string[]>('delete_chats').pipe(
     tap(chatIds => {
-      this.chats$$.next(this.chats$$.value.filter(({uuid}) => !chatIds.includes(uuid)));
+      const newMap = new Map(this.chats$$.value);
+      chatIds.forEach(chatId => newMap.delete(chatId));
+      this.chats$$.next(newMap);
     })
   );
 
   private readonly updateChat$ = this.socketService.fromEvent<Chat>('update_chat').pipe(
     tap(chat => {
-      this.chats$$.next([...this.chats$$.value.filter(({uuid}) => chat.uuid !== uuid), chat]);
+      const newMap = new Map(this.chats$$.value);
+      newMap.set(chat.uuid, chat);
+      this.chats$$.next(newMap);
     })
   );
 
   private readonly newMessages$ = this.socketService.fromEvent<Message[]>('new_messages').pipe(
     tap(messages => {
-      const newMap = new Map<string, Message[]>(this.allMessages$$.value);
+      const newMap = new Map<string, Message>(this.allMessages$$.value);
       messages.forEach(message => {
-        const chatMessages = newMap.get(message.chat_uuid) ?? [];
-        chatMessages.push(message);
-        newMap.set(message.chat_uuid, chatMessages);
+        newMap.set(message.uuid, message);
       });
       this.allMessages$$.next(newMap);
     })
@@ -110,9 +114,9 @@ export class ChatsService {
 
   private readonly deleteMessages$ = this.socketService.fromEvent<string[]>('delete_messages').pipe(
     tap(messageIds => {
-      const newMap = new Map<string, Message[]>(this.allMessages$$.value);
-      newMap.forEach((messages, chatId) => {
-        newMap.set(chatId, messages.filter(({uuid}) => !messageIds.includes(uuid)))
+      const newMap = new Map<string, Message>(this.allMessages$$.value);
+      messageIds.forEach(messageId => {
+        newMap.delete(messageId);
       })
       this.allMessages$$.next(newMap);
     })
@@ -120,27 +124,11 @@ export class ChatsService {
 
   private readonly messageAddContent$ = this.socketService.fromEvent<MessageAddContent>('message_add_content').pipe(
     tap(content => {
-      const newMap = new Map<string, Message[]>(this.allMessages$$.value);
-      const messages = newMap.get(content.chat);
-      if (messages) {
-        const index = messages.findIndex(m => m.uuid == content.uuid);
-        if (index != -1) {
-          const message = messages[index];
-          messages[index] = {
-            uuid: message.uuid,
-            chat_uuid: message.chat_uuid,
-            created_at: message.created_at,
-            deleted_at: message.deleted_at,
-            role: message.deleted_at,
-            content: message.content + content.content,
-            reply: message.reply,
-            model: message.model,
-            temperature: message.temperature,
-          };
-          this.allMessages$$.next(newMap);
-        } else {
-          console.warn(`Adding to no exist message ${content.uuid} (chat ${content.chat})`);
-        }
+      const newMap = new Map(this.allMessages$$.value);
+      const message = newMap.get(content.uuid);
+      if (message) {
+        message.content += content.content
+        this.allMessages$$.next(newMap);
       }
     })
   );
@@ -151,29 +139,30 @@ export class ChatsService {
 
   private readonly updates$ = this.socketService.fromEvent<Updates>('updates_response').pipe(
     tap(updates => {
-      this.chats$$.next([...this.chats$$.value.filter(({uuid}) => !updates.deleted_chats.includes(uuid)), ...updates.new_chats]);
-      const newMap = new Map<string, Message[]>(this.allMessages$$.value);
+      const newMap = new Map(this.chats$$.value);
+      updates.new_chats.forEach(chat => newMap.set(chat.uuid, chat));
+      updates.deleted_chats.forEach(chatId => newMap.delete(chatId));
+      updates.updated_chats.filter(chat => newMap.delete(chat.uuid));
+      this.chats$$.next(newMap);
+
+      const messagesMap = new Map(this.allMessages$$.value);
       updates.new_messages.forEach(message => {
-        const chatMessages = newMap.get(message.chat_uuid) ?? [];
-        chatMessages.push(message);
-        newMap.set(message.chat_uuid, chatMessages);
+        messagesMap.set(message.uuid, message);
       });
-      newMap.forEach((messages, chatId) => {
-        newMap.set(chatId, messages.filter(({uuid}) => !updates.deleted_messages.includes(uuid)))
-      })
-      this.allMessages$$.next(newMap);
+      updates.deleted_messages.forEach(messageId => messagesMap.delete(messageId));
+      this.allMessages$$.next(messagesMap);
     })
   );
 
   init() {
-    const pipe1 = this.storage.get<Chat[]>('chats').pipe(
+    const pipe1 = this.storage.get<Map<string, Chat>>('chats').pipe(
       tap(chats => {
         console.log(`Local chats: ${chats}`);
         if (chats)
           this.chats$$.next(chats);
       })
     );
-    const pipe2 = this.storage.get<Map<string, Message[]>>('messages').pipe(
+    const pipe2 = this.storage.get<Map<string, Message>>('messages').pipe(
       tap(messages => {
         console.log(`Local messages: ${messages}`);
         if (messages)

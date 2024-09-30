@@ -29,10 +29,9 @@
 <ion-content
   [scrollEvents]="true"
   (ionScroll)="onScroll($event)">
-<!--  <img src="assets/pattern-1.svg" alt="">-->
   <div class="bubbles-list">
-    @for (message of messages$ | async; track message) {
-      <app-chat-bubble [message]="message" (replyClicked)="onReplyClicked(message.uuid)"></app-chat-bubble>
+    @for (message of messages$ | async; track message.uuid) {
+      <app-chat-bubble [messageId]="message.uuid" (replyClicked)="onReplyClicked(message.uuid)"></app-chat-bubble>
     }
     @if (gptWriting$ | async) {
       <div class="gpt-writing-container">
@@ -55,6 +54,8 @@
     layout="stacked"
   ></ion-toast>
 </ion-content>
+
+<!--<img #wallpaper class="wallpaper" ngSrc="assets/pattern-1.svg" alt="" width="1125" height="2436">-->
 
 <ion-footer>
   @if (reply.length) {

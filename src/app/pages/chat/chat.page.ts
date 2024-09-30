@@ -83,7 +83,7 @@ export class ChatPage {
     })
   }
 
-  onReplyClicked(id: string){
+  onReplyClicked(id: string) {
     if (this.reply.filter(r => r.reply_to == id).length)
       return;
     this.reply.push({
@@ -101,8 +101,6 @@ export class ChatPage {
   }
 
   getMessage(id: string): Message | null {
-    if (this.chat)
-      return this.chatsService.getMessage(this.chat?.uuid, id) ?? null;
-    return null;
+    return this.chatsService.getMessage(id) ?? null;
   }
 }

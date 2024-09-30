@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, inject, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {IonActionSheet} from "@ionic/angular";
 import {Share} from "@capacitor/share";
 import {Clipboard} from '@capacitor/clipboard';
@@ -6,6 +6,8 @@ import {Message} from "../../core/models/message";
 import {ChatsService} from "../../core/services/chats.service";
 import {Reply} from "../../core/models/reply";
 import {Haptics, ImpactStyle} from "@capacitor/haptics";
+import {map, Observable, tap} from "rxjs";
+import {MarkdownComponent} from "ngx-markdown";
 
 @Component({
   selector: 'app-chat-bubble',
@@ -62,28 +64,40 @@ export class BubbleComponent implements OnInit {
     },
   ];
 
-  @Input() message?: Message;
+  @Input() messageId?: string;
   @Output() replyClicked = new EventEmitter();
   private holdTimeout: any;
+  protected message: Message | undefined;
+
+  @ViewChild('markdownComponent') markdownComponent: MarkdownComponent | undefined;
 
   protected reply: Reply[] = [];
+  private readonly cdr = inject(ChangeDetectorRef);
 
   constructor(private readonly chatsService: ChatsService) {
   }
 
+  private message$: Observable<Message | undefined> = this.chatsService.allMessages$.pipe(
+    map(messages => messages.get(this.messageId ?? '')),
+    tap(m => {
+      this.message = m;
+      this.reply = this.message?.reply.filter(r => r.type == 'explicit') ?? [];
+      this.markdownComponent?.render(this.message?.content ?? "")
+      this.cdr.detectChanges();
+    })
+  );
+
   ngOnInit() {
-    this.reply = this.message?.reply.filter(r => r.type == 'explicit') ?? [];
+    this.message$.subscribe();
   }
 
   public onContextMenu() {
     void this.action_sheet?.present()
-    void Haptics.impact({ style: ImpactStyle.Medium });
+    void Haptics.impact({style: ImpactStyle.Medium});
   }
 
   protected getMessage(id: string): Message | null {
-    if (this.message)
-      return this.chatsService.getMessage(this.message?.chat_uuid, id) ?? null;
-    return null;
+    return this.chatsService.getMessage(id) ?? null;
   }
 
   public onActionSheetDismiss(event: any) {
