@@ -10,6 +10,7 @@ import {ReplyCreate} from "../models/reply_create";
 import {ChatUpdate} from "../models/chat_update";
 import {HttpClient} from "@angular/common/http";
 import {HttpResp} from "../models/socket_resp";
+import {AuthService} from "./auth.service";
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,7 @@ export class ChatsService {
   private readonly socketService = inject(SocketService);
   private readonly storage = inject(StorageService);
   private readonly http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
 
   readonly chats$ = this.chats$$.pipe(
     shareReplay(1),
@@ -61,7 +63,7 @@ export class ChatsService {
   }
 
   getGptWriting(chatId: string) {
-    return this.gptWriting$$.pipe(
+    return this.gptWriting$.pipe(
       map(messages => messages.get(chatId) ?? false),
     );
   }
@@ -174,8 +176,20 @@ export class ChatsService {
         this.models$$.next(resp.data);
       })
     );
+    const pipe4 = this.authService.userChanged$.pipe(
+      tap(user => {
+        if (!user) {
+          this.chats$$.next(new Map());
+          this.allMessages$$.next(new Map());
+          this.gptWriting$$.next(new Map());
+
+          // this.storage.remove('chats');
+          // this.storage.remove('messages');
+        }
+      })
+    )
     return merge(
-      pipe1, pipe2, pipe3,
+      pipe1, pipe2, pipe3, pipe4,
       this.newChats$, this.deleteChats$, this.updateChat$,
       this.newMessages$, this.messageAddContent$, this.deleteMessages$, this.messageFinished$,
       this.updates$

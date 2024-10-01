@@ -28,4 +28,8 @@ export class StorageService {
       // tap(console.log)
     );
   }
+
+  remove(key: string){
+    void this.storage.remove(key);
+  }
 }

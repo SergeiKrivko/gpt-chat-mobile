@@ -31,6 +31,9 @@ export class SocketService {
         if (user && user.token) {
           this.socket.ioSocket['auth'] = user.token;
           this.connect();
+        } else {
+          this.time = '0001-01-01T00:00:00.000000';
+          this.storage.remove('time');
         }
       })
     );
