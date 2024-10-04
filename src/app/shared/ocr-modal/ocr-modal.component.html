@@ -1,0 +1,21 @@
+<ion-modal [isOpen]="isOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button (click)="cancel()">Отмена</ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end">
+          <ion-button (click)="confirm()" [strong]="true">отправить</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-select label="Выберите язык:" [formControl]="languageControl">
+        <ion-select-option value="rus">Русский</ion-select-option>
+        <ion-select-option value="eng">Английский</ion-select-option>
+      </ion-select>
+      <ion-textarea [formControl]="textControl" [autoGrow]="true"></ion-textarea>
+    </ion-content>
+  </ng-template>
+</ion-modal>

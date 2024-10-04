@@ -30,4 +30,14 @@ export class TranslateService {
       map(resp => resp.data)
     );
   }
+
+  extractText(image: string, language: string): Observable<string> {
+    return this.http.post<HttpResp<string>>("https://gptchat-api.nachert.art/api/v1/translate/extract",
+      {
+        lang: language,
+        image: image,
+      }).pipe(
+      map(resp => resp.data)
+    );
+  }
 }

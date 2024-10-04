@@ -23,6 +23,7 @@ import {ChatSettingsPageComponent} from "./pages/chat-settings-page/chat-setting
 import {ReplyItemComponent} from "./shared/reply-item/reply-item.component";
 import {ArchivePageComponent} from "./pages/archive/archive-page.component";
 import {NgOptimizedImage} from "@angular/common";
+import {OcrModalComponent} from "./shared/ocr-modal/ocr-modal.component";
 
 const firebase_config = {
   apiKey: "AIzaSyA8z4fe_VedzuLvLQk9HnQTFnVeJDRdxkc",
@@ -41,7 +42,7 @@ const config: SocketIoConfig = {url: 'https://gptchat-api.nachert.art/'};
 
 @NgModule({
   declarations: [AppComponent, HomePage, AuthPage, ChatPage, BubbleComponent, SettingsPage, ChatSettingsPageComponent,
-    ReplyItemComponent, ArchivePageComponent],
+    ReplyItemComponent, ArchivePageComponent, OcrModalComponent],
     imports: [
         BrowserModule,
         IonicModule.forRoot(),

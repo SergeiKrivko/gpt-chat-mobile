@@ -3,9 +3,12 @@ import {IonContent, IonToast, ScrollDetail} from "@ionic/angular";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Chat} from "../../core/models/chat";
 import {ChatsService} from "../../core/services/chats.service";
-import {Observable, tap} from "rxjs";
+import {EMPTY, filter, from, map, Observable, of, switchMap, tap} from "rxjs";
 import {Message} from "../../core/models/message";
 import {ReplyCreate} from "../../core/models/reply_create";
+import {Camera, CameraResultType, Photo} from '@capacitor/camera';
+import {TranslateService} from "../../core/services/translate.service";
+import {OcrModalComponent} from "../../shared/ocr-modal/ocr-modal.component";
 
 @Component({
   selector: 'app-chat',
@@ -22,6 +25,8 @@ export class ChatPage {
   @ViewChild(IonContent) private readonly content: IonContent | undefined;
 
   @ViewChild(IonToast) private readonly toast: IonToast | undefined;
+
+  @ViewChild(OcrModalComponent) private readonly ocrModal: OcrModalComponent | undefined;
 
   public scroll_top: number = 0
   public scroll_bottom: number = 200
@@ -63,6 +68,11 @@ export class ChatPage {
     this.reply = [];
   }
 
+  sendFromImage(text: string) {
+    if (this.chat)
+      this.chatsService.newMessage(this.chat.uuid, text)
+  }
+
   public scrollToBottom() {
     // Passing a duration to the method makes it so the scroll slowly
     // goes to the bottom instead of instantly
@@ -102,5 +112,9 @@ export class ChatPage {
 
   getMessage(id: string): Message | null {
     return this.chatsService.getMessage(id) ?? null;
+  }
+
+  onImageClicked() {
+    this.ocrModal?.open();
   }
 }
