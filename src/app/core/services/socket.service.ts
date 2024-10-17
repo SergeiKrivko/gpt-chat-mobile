@@ -15,9 +15,9 @@ export class SocketService {
   private readonly storage = inject(StorageService);
 
   private time = '0001-01-01T00:00:00.000000';
-  private connected: boolean = false;
 
   init() {
+    console.log(this.socket.ioSocket)
     const pipe3 = this.storage.get<string>('time').pipe(
       tap(time => {
         if (time !== null) {
@@ -47,12 +47,11 @@ export class SocketService {
 
   disconnect() {
     this.socket.disconnect();
-    this.connected = false;
   }
 
   connect() {
     console.log("Connecting...")
-    if (!this.connected) {
+    if (!this.socket.ioSocket.connected) {
       this.socket.connect(err => {
         console.error(err)
       })

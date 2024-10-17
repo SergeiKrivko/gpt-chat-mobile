@@ -49,11 +49,11 @@ export class OcrModalComponent implements OnInit {
   }
 
   cancel() {
-    this.modal?.dismiss(null, 'cancel');
+    this.isOpen = false;
   }
 
   confirm() {
-    this.modal?.dismiss('message', 'confirm');
+    this.isOpen = false;
     if (this.textControl.value)
       this.onSend.emit(this.textControl.value);
   }
