@@ -28,17 +28,7 @@
   left: 0;
 }
 
-.container {
+ion-content::part(background) {
   background: url("/assets/pattern-18.svg");
-  flex: 1 1 auto;
-
-  ion-content::part(background) {
-    background: transparent;
-  }
 }
 
-.chat-page-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
