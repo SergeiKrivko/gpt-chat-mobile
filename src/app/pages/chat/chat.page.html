@@ -1,83 +1,86 @@
-<ion-header [translucent]="true" id="header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
-    </ion-buttons>
-    <ion-title>{{ chat?.name }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="showSearchbar()">
-        <ion-icon slot="icon-only" name="search"></ion-icon>
-      </ion-button>
-      <ion-button routerLink="./settings">
-        <ion-icon slot="icon-only" name="menu"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  <ion-toolbar *ngIf="!searchbar_hidden">
-    <ion-searchbar></ion-searchbar>
-    <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon slot="icon-only" name="chevron-up" size="small"></ion-icon>
-      </ion-button>
-      <ion-button>
-        <ion-icon slot="icon-only" name="chevron-down" size="small"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content
-  [scrollEvents]="true"
-  (ionScroll)="onScroll($event)">
-  <div class="bubbles-list">
-    @for (message of messages$ | async; track message.uuid) {
-      <app-chat-bubble [messageId]="message.uuid" (replyClicked)="onReplyClicked(message.uuid)"></app-chat-bubble>
-    }
-    @if (gptWriting$ | async) {
-      <div class="gpt-writing-container">
-        <span>GPT печатает</span>
-        <ion-spinner name="dots"/>
-      </div>
-    }
-  </div>
-  <ion-fab-button [hidden]="scroll_bottom <= 100" class="button-down" slot="fixed" size="small"
-                  (click)="scrollToBottom()">
-    <ion-icon name="chevron-down"></ion-icon>
-  </ion-fab-button>
-
-  <ion-toast
-    message="Hello World!"
-    position="top"
-    positionAnchor="header"
-    [duration]="30000"
-    [buttons]="toastButtons"
-    layout="stacked"
-  ></ion-toast>
-</ion-content>
-
-<!--<img #wallpaper class="wallpaper" ngSrc="assets/pattern-1.svg" alt="" width="1125" height="2436">-->
-
-<ion-footer>
-  @if (reply.length) {
+<div class="chat-page-container">
+  <ion-header [translucent]="true" id="header">
     <ion-toolbar>
-      @for (reply of this.reply; track reply) {
-        <app-reply-item [text]="getMessage(reply.reply_to)?.content ?? ''" (deleted)="removeReply(reply.reply_to)"
-                        [removable]="true"/>
-      }
+      <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
+      <ion-title>{{ chat?.name }}</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="showSearchbar()">
+          <ion-icon slot="icon-only" name="search"></ion-icon>
+        </ion-button>
+        <ion-button routerLink="./settings">
+          <ion-icon slot="icon-only" name="menu"></ion-icon>
+        </ion-button>
+      </ion-buttons>
     </ion-toolbar>
-  }
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="onImageClicked()">
-        <ion-icon name="image-outline" slot="icon-only"/>
-      </ion-button>
-    </ion-buttons>
-    <ion-textarea [autoGrow]="true" placeholder="Message..." [(ngModel)]="text" class="chat-input-area"></ion-textarea>
-    <ion-buttons slot="end">
-      <ion-button (click)="sendMessage()">
-        <ion-icon slot="icon-only" name="send"/>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  <app-ocr-modal (onSend)="sendFromImage($event)"/>
-</ion-footer>
+    <ion-toolbar *ngIf="!searchbar_hidden">
+      <ion-searchbar></ion-searchbar>
+      <ion-buttons slot="end">
+        <ion-button>
+          <ion-icon slot="icon-only" name="chevron-up" size="small"></ion-icon>
+        </ion-button>
+        <ion-button>
+          <ion-icon slot="icon-only" name="chevron-down" size="small"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="container">
+    <ion-content
+      [scrollEvents]="true"
+      (ionScroll)="onScroll($event)">
+      <div class="bubbles-list">
+        @for (message of messages$ | async; track message.uuid) {
+          <app-chat-bubble [messageId]="message.uuid" (replyClicked)="onReplyClicked(message.uuid)"></app-chat-bubble>
+        }
+        @if (gptWriting$ | async) {
+          <div class="gpt-writing-container">
+            <span>GPT печатает</span>
+            <ion-spinner name="dots"/>
+          </div>
+        }
+      </div>
+      <ion-fab-button [hidden]="scroll_bottom <= 100" class="button-down" slot="fixed" size="small"
+                      (click)="scrollToBottom()">
+        <ion-icon name="chevron-down"></ion-icon>
+      </ion-fab-button>
+
+      <ion-toast
+        message="Hello World!"
+        position="top"
+        positionAnchor="header"
+        [duration]="30000"
+        [buttons]="toastButtons"
+        layout="stacked"
+      ></ion-toast>
+    </ion-content>
+  </div>
+
+  <ion-footer>
+    @if (reply.length) {
+      <ion-toolbar>
+        @for (reply of this.reply; track reply) {
+          <app-reply-item [text]="getMessage(reply.reply_to)?.content ?? ''" (deleted)="removeReply(reply.reply_to)"
+                          [removable]="true"/>
+        }
+      </ion-toolbar>
+    }
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button (click)="onImageClicked()">
+          <ion-icon name="image-outline" slot="icon-only"/>
+        </ion-button>
+      </ion-buttons>
+      <ion-textarea [autoGrow]="true" placeholder="Message..." [(ngModel)]="text"
+                    class="chat-input-area"></ion-textarea>
+      <ion-buttons slot="end">
+        <ion-button (click)="sendMessage()">
+          <ion-icon slot="icon-only" name="send"/>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <app-ocr-modal (onSend)="sendFromImage($event)"/>
+  </ion-footer>
+</div>

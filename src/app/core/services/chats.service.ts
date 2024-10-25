@@ -144,7 +144,7 @@ export class ChatsService {
       const newMap = new Map(this.chats$$.value);
       updates.new_chats.forEach(chat => newMap.set(chat.uuid, chat));
       updates.deleted_chats.forEach(chatId => newMap.delete(chatId));
-      updates.updated_chats.filter(chat => newMap.delete(chat.uuid));
+      updates.updated_chats.forEach(chat => newMap.set(chat.uuid, chat));
       this.chats$$.next(newMap);
 
       const messagesMap = new Map(this.allMessages$$.value);
